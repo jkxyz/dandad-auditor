@@ -3,6 +3,18 @@
 # A vanilla Ruby HTTP server that proxies requests to www.dandad.org
 # to allow unauthorised cross-origin browser requests whilst retaining
 # user session.
+#
+# Listens on http://localhost:3456
+#
+# Routes:
+#
+#   GET /login
+#     Submits a login request to the CMS login page and keeps the cookie.
+#     Requires the headers 'X-Username' and 'X-Password' for authorization.
+#
+#   GET /get
+#     Uses the cookie from an authorization request to perform a GET request
+#     whilst logged in to the CMS. Requires the 'X-URL' header.
 
 require 'socket'
 require 'net/http'
@@ -58,8 +70,35 @@ ROUTES = [
 
       # Store the new cookie for authenticating new requests
       $session_cookie = response['Set-Cookie']
+    end
 
-      return "OK\n"
+    "OK\n"
+  }],
+  [/^GET \/get/, -> (req) {
+    # Require that a logged in session has been created
+    return "Error\n" if $session_cookie.nil?
+
+    url = nil
+
+    req.each do |line|
+      if line =~ /^X-URL: /
+        url = line.match(/^X-URL: (.+)$/)[1]
+      end
+    end
+
+    # Validate that the requested URL is to www.dandad.org
+    return "Error\n" if url.nil? || URI(url).host != 'www.dandad.org'
+
+    Net::HTTP.start('www.dandad.org', 80) do |http|
+      request = Net::HTTP::Get.new(URI(url))
+
+      # Use the cookie that contains the logged in session ID
+      request['Cookie'] = $session_cookie
+
+      response = http.request(request)
+
+      # Pass the returned response body back to the client
+      return response.body
     end
   }]
 ]
