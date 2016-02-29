@@ -6,8 +6,8 @@
 #
 # Listens on http://localhost:3000
 #
-# POST /login -- Takes a `username` and `password` paramater to login to the CMS
-# GET  /get   -- Takes a `url` paramater to request with the stored cookie
+# POST /login -- Takes a `username` and `password` parameter to login to the CMS
+# GET  /get   -- Takes a `url` parameter to request with the stored cookie
 
 require 'webrick'
 require 'net/http'

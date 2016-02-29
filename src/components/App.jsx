@@ -1,23 +1,43 @@
-define(['react'], function (React) {
-  var App = React.createClass({
-    render: function () {
-      return <div className='wrapper'>
-        <form onSubmit={this.onFormSubmit}>
-          <input type='text' ref='usernameInput' placeholder='Username' />
-          <input type='password' ref='passwordInput' placeholder='Password' />
-          <button type='submit'>Login</button>
-        </form>
-      </div>;
-    },
-    onFormSubmit: function (e) {
-      var username = this.refs.usernameInput.value;
-      var password = this.refs.passwordInput.value;
+define(['react', 'react-redux', 'jsx!LoginButton'], function (React, ReactRedux, LoginButton) {
 
-      console.log(username, password);
+  var App = function (props) {
+    return <div className='uk-container uk-container-center'>
+      <div className='uk-margin-top uk-margin-bottom uk-text-right'>
+        <LoginButton isLoggedIn={props.isLoggedIn} username={props.loggedInUsername} onSubmit={props.onLoginFormSubmit} />
+      </div>
+    </div>;
+  };
 
-      e.preventDefault();
-    }
-  });
+  var mapStateToProps = function (state) {
+    return {};
+  };
 
-  return App;
+  var mapDispatchToProps = function (dispatch) {
+    return {
+      /**
+       * Submit a request to the local login endpoint to authorize all future requests
+       * to the CMS. Update the logged in state of the application if successful.
+       */
+      onLoginFormSubmit: function (e) {
+        var username = e.target.children.username.value;
+        var password = e.target.children.password.value;
+        var req      = $.ajax('/api/login', { method: 'POST', data: { username: username, password: password } });
+
+        req.success(function () {
+          dispatch({ type: 'USER_LOGGED_IN', username: username });
+        });
+
+        req.error(function () {
+          alert('Error loggin in. Try again.');
+        });
+
+        e.preventDefault();
+      }
+    };
+  };
+
+  var AppWrapper = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(App);
+
+  return AppWrapper;
+
 });
