@@ -22,7 +22,27 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
         
         dispatch({ type: 'refreshPagesStart' })
 
-        setTimeout(() => { dispatch({ type: 'refreshPagesEnd' }) }, 2000)
+        const pagesUrl = 'http://www.dandad.org/manage/pages/basepage/?p='
+        const parser   = new DOMParser
+
+        // Fetch the first page to get the count of pages, then fetch concurrently
+        $.ajax('/api/get?url=' + pagesUrl + 0).success((res) => {
+
+          const doc      = parser.parseFromString(res, 'text/html')
+          const lastPage = Number(doc.querySelector('.pagination a.end').innerHTML) - 1
+          const pageReqs = []
+
+          for (let currentPage = 0; currentPage <= lastPage; currentPage++) {
+            pageReqs.push($.ajax('/api/get?url=' + pagesUrl + currentPage).promise())
+          }
+
+          $.when.apply(null, pageReqs).done(() => {
+
+            const pages = Array.prototype.map.call(arguments, p => { return p[0] })
+
+          })
+
+        })
 
       }
 
