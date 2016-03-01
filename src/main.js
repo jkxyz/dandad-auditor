@@ -39,7 +39,7 @@ require(['react', 'react-dom', 'react-redux', 'redux', 'jsx!components/App'], fu
         return Object.assign({}, state, { isRefreshingPages: true })
 
       case 'refreshPagesEnd':
-        return Object.assign({}, state, { isRefreshingPages: false })
+        return Object.assign({}, state, { isRefreshingPages: false, pages: action.pages })
 
     }
 

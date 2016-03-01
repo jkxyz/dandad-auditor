@@ -33,12 +33,38 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
           const pageReqs = []
 
           for (let currentPage = 0; currentPage <= lastPage; currentPage++) {
+
             pageReqs.push($.ajax('/api/get?url=' + pagesUrl + currentPage).promise())
+
           }
 
           $.when.apply(null, pageReqs).done(() => {
 
-            const pages = Array.prototype.map.call(arguments, p => { return p[0] })
+            const cmsPages = Array.prototype.map.call(arguments, p => { return p[0] })
+            const pages    = []
+
+            for (let i = 0; i < cmsPages.length; i++) {
+
+              let doc  = parser.parseFromString(cmsPages[i], 'text/html')
+              let rows = doc.querySelectorAll('#result_list tbody tr')
+
+              for (let j = 0; j < rows.length; j++) {
+
+                let row = rows[j]
+                
+                pages.push({
+                  title:        row.querySelector('th:nth-child(2) a').text
+                , slug:         row.querySelector('td:nth-child(3)').innerHTML
+                , contentType:  row.querySelector('td:nth-child(4)').innerHTML
+                , isPublished:  row.querySelector('td:nth-child(5) input').checked
+                , isRestricted: row.querySelector('td:nth-child(7) img').alt === 'True'
+                })
+
+              }
+
+            }
+
+            dispatch({ type: 'refreshPagesEnd', pages })
 
           })
 
