@@ -11,44 +11,7 @@ require.config({
 , jsx: { fileExtension: '.jsx', harmony: true }
 })
 
-require(['react', 'react-dom', 'react-redux', 'redux', 'jsx!components/App'], function (React, ReactDOM, ReactRedux, Redux, App) {
-
-  var initialState = {
-    login: { isLoggedIn: false, isLoggingIn: false, username: null }
-  , isRefreshingPages: false
-  }
-  
-  var store = Redux.createStore(function (state, action) {
-
-    if (typeof state === 'undefined') {
-      return initialState
-    }
-
-    switch (action.type) {
-
-      case 'userLogin':
-        return Object.assign({}, state, { login: { isLoggedIn: true, username: action.username } })
-
-      case 'userStartLogin':
-        return Object.assign({}, state, { login: { isLoggingIn: true } })
-
-      case 'userEndLogin':
-        return Object.assign({}, state, { login: { isLoggingIn: false } })
-
-      case 'refreshPagesStart':
-        return Object.assign({}, state, { isRefreshingPages: true })
-
-      case 'refreshPagesEnd':
-        return Object.assign({}, state, { isRefreshingPages: false, pages: action.pages })
-
-    }
-
-  })
-
-  // Check whether the user is currently logged in to the CMS
-  $.ajax('/api/login').success(function (username) {
-    store.dispatch({ type: 'userLogin', username: username })
-  })
+require(['react', 'react-dom', 'react-redux', 'jsx!./store', 'jsx!components/App'], function (React, ReactDOM, ReactRedux, store, App) {
 
   // Render out the main `App` component within the Redux `Provider` which gives nested
   // components access to the application state reducer
