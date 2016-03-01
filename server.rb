@@ -90,7 +90,12 @@ server.mount_proc '/api' do |req, res|
     res.status, res.body = 404, "Not Found\n"
   end
 
+  res['Content-Type'] = 'text/plain'
+
 end
+
+# Serve files from the directory root, forcing the Pragma header to 'no-cache'
+server.mount '/', WEBrick::HTTPServlet::FileHandler, '.', FileCallback: -> (req, res) { res['Pragma'] = 'no-cache' }
 
 trap 'INT' do server.shutdown end
 
