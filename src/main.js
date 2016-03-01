@@ -14,18 +14,28 @@ require.config({
 require(['react', 'react-dom', 'react-redux', 'redux', 'jsx!components/App'], function (React, ReactDOM, ReactRedux, Redux, App) {
 
   var initialState = {
-    login: { isLoggedIn: false, username: null }
+    login: { isLoggedIn: false, isLoggingIn: false, username: null }
   }
   
   var store = Redux.createStore(function (state, action) {
+
     if (typeof state === 'undefined') {
       return initialState
     }
 
     switch (action.type) {
+
       case 'userLogin':
         return Object.assign({}, state, { login: { isLoggedIn: true, username: action.username } })
+
+      case 'userStartLogin':
+        return Object.assign({}, state, { login: { isLoggingIn: true } })
+
+      case 'userEndLogin':
+        return Object.assign({}, state, { login: { isLoggingIn: false } })
+
     }
+
   })
 
   // Render out the main `App` component within the Redux `Provider` which gives nested
