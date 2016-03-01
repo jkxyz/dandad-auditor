@@ -1,7 +1,8 @@
-define(['react', 'react-redux', 'jsx!./Login'], (React, ReactRedux, Login) => {
+define(['react', 'react-redux', 'jsx!./Login', 'jsx!./PagesRefresh'], (React, ReactRedux, Login, PagesRefresh) => {
 
   const Controls = () => {
     return <div className='uk-margin-top uk-margin-bottom'>
+      <PagesRefresh />
       <Login />
     </div>
   }

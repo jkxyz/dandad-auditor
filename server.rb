@@ -6,6 +6,7 @@
 #
 # Listens on http://localhost:3000
 #
+# GET  /login -- Returns the currently signed in username as plain text or a 400 error
 # POST /login -- Takes a `username` and `password` parameter to login to the CMS
 # GET  /get   -- Takes a `url` parameter to request with the stored cookie
 
@@ -13,10 +14,17 @@ require 'webrick'
 require 'net/http'
 
 session_cookie = nil
+session_username = nil
 
 # An array of arrays where the first element is a RegExp to match the request line
 # and the second is a Proc which returns the response status and body
 routes = [
+  [
+    /^GET \/api\/login/, -> (req) {
+      return 200, session_username + "\n" if session_username
+      return 400, "Not logged in\n"
+    }
+  ],
   [
     # Receive a username and password to make a login request to the CMS and store
     # the cookie with the session ID
@@ -51,6 +59,7 @@ routes = [
         return 403, "Bad Login\n" unless res.is_a?(Net::HTTPFound)
 
         session_cookie = res['Set-Cookie']
+        session_username = username.strip
       end
 
       return 200, "OK\n"

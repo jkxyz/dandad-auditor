@@ -15,6 +15,7 @@ require(['react', 'react-dom', 'react-redux', 'redux', 'jsx!components/App'], fu
 
   var initialState = {
     login: { isLoggedIn: false, isLoggingIn: false, username: null }
+  , isRefreshingPages: false
   }
   
   var store = Redux.createStore(function (state, action) {
@@ -34,8 +35,19 @@ require(['react', 'react-dom', 'react-redux', 'redux', 'jsx!components/App'], fu
       case 'userEndLogin':
         return Object.assign({}, state, { login: { isLoggingIn: false } })
 
+      case 'refreshPagesStart':
+        return Object.assign({}, state, { isRefreshingPages: true })
+
+      case 'refreshPagesEnd':
+        return Object.assign({}, state, { isRefreshingPages: false })
+
     }
 
+  })
+
+  // Check whether the user is currently logged in to the CMS
+  $.ajax('/api/login').success(function (username) {
+    store.dispatch({ type: 'userLogin', username: username })
   })
 
   // Render out the main `App` component within the Redux `Provider` which gives nested
