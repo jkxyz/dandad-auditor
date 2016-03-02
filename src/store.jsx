@@ -20,22 +20,24 @@ define(['redux'], (Redux) => {
 
     switch (action.type) {
 
-            case 'userLogin':
-                    return Object.assign({}, state, { login: { isLoggedIn: true, username: action.username } })
+      case 'userLogin':
+        return Object.assign({}, state, { login: { isLoggedIn: true, username: action.username } })
 
-            case 'userStartLogin':
-                    return Object.assign({}, state, { login: { isLoggingIn: true } })
+      case 'userStartLogin':
+        return Object.assign({}, state, { login: { isLoggingIn: true } })
 
-            case 'userEndLogin':
-                    return Object.assign({}, state, { login: { isLoggingIn: false } })
+      case 'userEndLogin':
+        return Object.assign({}, state, { login: { isLoggingIn: false } })
 
-            case 'refreshPagesStart':
-                    return Object.assign({}, state, { isRefreshingPages: true })
+      case 'refreshPagesStart':
+        return Object.assign({}, state, { isRefreshingPages: true })
 
-            case 'refreshPagesEnd':
-                    return Object.assign({}, state, { isRefreshingPages: false, pages: action.pages })
+      case 'refreshPagesEnd':
+        return Object.assign({}, state, { isRefreshingPages: false, pages: action.pages })
 
     }
+
+    return state
 
   }
 
