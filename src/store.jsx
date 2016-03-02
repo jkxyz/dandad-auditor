@@ -12,7 +12,7 @@ define(['redux'], (Redux) => {
   
   , isRefreshingPages: false
 
-  , pages: []
+  , pages: JSON.parse(localStorage.dandadAuditorPages || '[]')
 
   }
 

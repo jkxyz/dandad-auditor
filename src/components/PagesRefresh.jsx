@@ -12,7 +12,7 @@ define(['react', 'react-redux', 'jsx!../utils/fetchPages'], (React, ReactRedux, 
 
     return {
 
-      disabled: state.isRefreshingPages || !state.login.isLoggedIn
+      disabled:     state.isRefreshingPages || !state.login.isLoggedIn
     , isRefreshing: state.isRefreshingPages
 
     }
@@ -28,6 +28,8 @@ define(['react', 'react-redux', 'jsx!../utils/fetchPages'], (React, ReactRedux, 
         dispatch({ type: 'refreshPagesStart' })
 
         fetchPages().done(pages => {
+
+          localStorage.dandadAuditorPages = JSON.stringify(pages)
 
           dispatch({ type: 'refreshPagesEnd', pages })
 
