@@ -14,6 +14,9 @@ define(['redux'], (Redux) => {
 
   , pages: JSON.parse(localStorage.dandadAuditorPages || '[]')
 
+  , sortColumn: null
+  , sortDirection: 'ASC'
+
   }
 
   const reducer = (state = initialState, action) => {
@@ -34,6 +37,12 @@ define(['redux'], (Redux) => {
 
       case 'refreshPagesEnd':
         return Object.assign({}, state, { isRefreshingPages: false, pages: action.pages })
+
+      case 'toggleSortColumn':
+        if (action.column !== state.sortColumn) {
+          return Object.assign({}, state, { sortColumn: action.column, sortDirection: 'ASC' })
+        }
+        return Object.assign({}, state, { sortDirection: state.sortDirection === 'ASC' ? 'DESC' : 'ASC' })
 
     }
 

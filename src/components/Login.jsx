@@ -3,27 +3,34 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
   const Login = ({ isLoggedIn, isLoggingIn, username, onLoginSubmit }) => {
 
     if (isLoggedIn) {
+
       return <span className='uk-float-right'>Logged in as {username}</span>
+
     }
 
-    return <div className='uk-button-dropdown uk-float-right' data-uk-dropdown='{pos:"bottom-right"}'>
-      <button className='uk-button uk-button-primary'>Login</button>
-      <div className='uk-dropdown'>
-        <form className='uk-form' onSubmit={onLoginSubmit}>
-          <input name='username' type='text' placeholder='Username' className='uk-margin-small-bottom' disabled={isLoggingIn} />
-          <input name='password' type='password' placeholder='Password' disabled={isLoggingIn} />
-          <input type='submit' className='uk-hidden' />
-        </form>
+    return (
+      <div className='uk-button-dropdown uk-float-right' data-uk-dropdown='{pos:"bottom-right"}'>
+        <button className='uk-button uk-button-primary'>Login</button>
+        <div className='uk-dropdown'>
+          <form className='uk-form' onSubmit={onLoginSubmit}>
+            <input name='username' type='text' placeholder='Username' className='uk-margin-small-bottom' disabled={isLoggingIn} />
+            <input name='password' type='password' placeholder='Password' disabled={isLoggingIn} />
+            <input type='submit' className='uk-hidden' />
+          </form>
+        </div>
       </div>
-    </div>
+    )
 
   }
 
   const mapStateToProps = state => {
+
     return state.login
+
   }
 
   const mapDispatchToProps = dispatch => {
+
     return {
 
       onLoginSubmit: e => {
@@ -50,6 +57,7 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
       }
 
     }
+
   }
 
   return ReactRedux.connect(mapStateToProps, mapDispatchToProps)(Login)

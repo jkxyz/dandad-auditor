@@ -21,7 +21,9 @@ session_username = nil
 routes = [
   [
     /^GET \/api\/login/, -> (req) {
+
       return 200, session_username + "\n" if session_username
+
       return 400, "Not logged in\n"
     }
   ],

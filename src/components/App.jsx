@@ -2,10 +2,12 @@ define(['react', 'jsx!./Controls', 'jsx!./PagesTable'], (React, Controls, PagesT
 
   const App = () => {
 
-    return <div className='uk-container uk-container-center'>
-      <Controls />
-      <PagesTable />
-    </div>
+    return (
+      <div className='uk-container uk-container-center'>
+        <Controls />
+        <PagesTable />
+      </div>
+    )
 
   }
 

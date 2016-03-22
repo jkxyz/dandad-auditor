@@ -2,9 +2,11 @@ define(['react', 'react-redux', 'jsx!../utils/fetchPages'], (React, ReactRedux, 
 
   const PagesRefresh = ({ disabled, isRefreshing, onButtonClick }) => {
 
-    return <button type='button' className='uk-button uk-button-success' onClick={onButtonClick} disabled={disabled}>
-      {isRefreshing ? 'Fetching pages...' : 'Refresh Pages'}
-    </button>
+    return (
+      <button type='button' className='uk-button uk-button-success' onClick={onButtonClick} disabled={disabled}>
+        {isRefreshing ? 'Fetching pages...' : 'Refresh Pages'}
+      </button>
+    )
 
   }
 

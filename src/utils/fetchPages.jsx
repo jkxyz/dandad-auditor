@@ -34,7 +34,7 @@ define([], () => {
 
             pages.push({
 
-              id:           row.querySelector('th:nth-child(2) a').href.match(/\/([0-9]+)\/$/)[1]
+              id:           Number(row.querySelector('th:nth-child(2) a').href.match(/\/([0-9]+)\/$/)[1])
             , title:        row.querySelector('th:nth-child(2) a').text
             , slug:         row.querySelector('td:nth-child(3)').innerHTML
             , contentType:  row.querySelector('td:nth-child(4)').innerHTML
