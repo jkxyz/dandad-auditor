@@ -1,5 +1,7 @@
 define(['react', 'react-redux', 'jsx!./Login', 'jsx!./PagesRefresh'], (React, ReactRedux, Login, PagesRefresh) => {
 
+  'use strict'
+
   const Controls = () => {
 
     return (

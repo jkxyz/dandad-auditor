@@ -1,5 +1,7 @@
 define(['react', 'react-redux'], (React, ReactRedux) => {
 
+  'use strict'
+
   const ToggleIcon = ({ column, sortColumn, sortDirection }) => {
 
     if (column === sortColumn) {

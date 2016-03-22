@@ -1,5 +1,7 @@
 define(['react', 'react-redux'], (React, ReactRedux) => {
 
+  'use strict'
+
   const Login = ({ isLoggedIn, isLoggingIn, username, onLoginSubmit }) => {
 
     if (isLoggedIn) {

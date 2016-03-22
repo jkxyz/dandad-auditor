@@ -1,5 +1,7 @@
 define(['redux'], (Redux) => {
 
+  'use strict'
+
   const initialState = {
   
     login: {

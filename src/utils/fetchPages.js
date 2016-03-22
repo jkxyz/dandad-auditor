@@ -1,5 +1,7 @@
 define([], () => {
 
+  'use strict'
+
   return () => {
 
     const pagesUrl  = 'http://www.dandad.org/manage/pages/basepage/?p='
@@ -18,7 +20,7 @@ define([], () => {
 
       }
 
-      $.when.apply(null, pageReqs).done(() => {
+      $.when.apply(null, pageReqs).done(function () {
 
         let results = [].map.call(arguments, p => { return p[0] })
         let pages   = []
@@ -34,7 +36,7 @@ define([], () => {
 
             pages.push({
 
-              id:           Number(row.querySelector('th:nth-child(2) a').href.match(/\/([0-9]+)\/$/)[1])
+              id:           Number(row.querySelector('th:nth-child(2) a').attributes.href.value.match(/\/([0-9]+)\/$/)[1])
             , title:        row.querySelector('th:nth-child(2) a').text
             , slug:         row.querySelector('td:nth-child(3)').innerHTML
             , contentType:  row.querySelector('td:nth-child(4)').innerHTML

@@ -16,7 +16,9 @@ require.config({
 
 })
 
-require(['react', 'react-dom', 'react-redux', 'jsx!./store', 'jsx!components/App'], function (React, ReactDOM, ReactRedux, store, App) {
+require(['react', 'react-dom', 'react-redux', './store', 'jsx!./components/App'], (React, ReactDOM, ReactRedux, store, App) => {
+
+  'use strict'
 
   // Render out the main `App` component within the Redux `Provider` which gives nested
   // components access to the application state reducer

@@ -1,4 +1,6 @@
-define(['react', 'react-redux', 'jsx!../utils/fetchPages'], (React, ReactRedux, fetchPages) => {
+define(['react', 'react-redux', '../utils/fetchPages'], (React, ReactRedux, fetchPages) => {
+
+  'use strict'
 
   const PagesRefresh = ({ disabled, isRefreshing, onButtonClick }) => {
 

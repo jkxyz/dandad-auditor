@@ -1,5 +1,7 @@
 define(['react', 'jsx!./Controls', 'jsx!./PagesTable'], (React, Controls, PagesTable) => {
 
+  'use strict'
+
   const App = () => {
 
     return (
