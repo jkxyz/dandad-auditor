@@ -13,7 +13,7 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
 
     }
 
-    return <span></span>
+    return <div></div>
 
   }
 
@@ -90,18 +90,9 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
 
     pages.sort((a, b) => {
 
-      if (a[state.sortColumn] < b[state.sortColumn]) {
-        
-        return state.sortDirection === 'ASC' ? -1 : 1
+      if (a[state.sortColumn] < b[state.sortColumn]) return state.sortDirection === 'ASC' ? -1 : 1
 
-      }
-
-
-      if (a[state.sortColumn] > b[state.sortColumn]) {
-
-        return state.sortDirection === 'ASC' ? 1 : -1
-
-      }
+      if (a[state.sortColumn] > b[state.sortColumn]) return state.sortDirection === 'ASC' ? 1 : -1
 
       return 0
 
@@ -121,13 +112,10 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
 
     return {
 
-      makeOnColumnClick: (column) => {
+      makeOnColumnClick: column => {
 
-        return () => {
-
-          dispatch({ type: 'toggleSortColumn', column })
-
-        }
+        // Return a handler that will toggle the sort column
+        return () => dispatch({ type: 'toggleSortColumn', column })
 
       }
     

@@ -39,9 +39,14 @@ define(['redux'], (Redux) => {
         return Object.assign({}, state, { isRefreshingPages: false, pages: action.pages })
 
       case 'toggleSortColumn':
+        // If the toggled column is not the active sort column, then switch to sorting by the
+        // new field. Otherwise, toggle the sort direction for the current column.
         if (action.column !== state.sortColumn) {
+
           return Object.assign({}, state, { sortColumn: action.column, sortDirection: 'ASC' })
+
         }
+
         return Object.assign({}, state, { sortDirection: state.sortDirection === 'ASC' ? 'DESC' : 'ASC' })
 
     }
