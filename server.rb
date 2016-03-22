@@ -106,7 +106,7 @@ server.mount_proc '/api' do |req, res|
 end
 
 # Serve files from the directory root, forcing the Pragma header to 'no-cache'
-server.mount '/', WEBrick::HTTPServlet::FileHandler, '.', FileCallback: -> (req, res) { res['Pragma'] = 'no-cache' }
+server.mount '/', WEBrick::HTTPServlet::FileHandler, File.dirname(__FILE__), FileCallback: -> (req, res) { res['Pragma'] = 'no-cache' }
 
 trap 'INT' do server.shutdown end
 
