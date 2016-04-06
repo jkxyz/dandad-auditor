@@ -1,7 +1,5 @@
 require.config({
-
   paths: {
-
     'react': '../vendor/react-with-addons'
   , 'react-dom': '../vendor/react-dom'
   , 'redux': '../vendor/redux'
@@ -9,22 +7,19 @@ require.config({
   , 'JSXTransformer': '../vendor/JSXTransformer'
   , 'text': '../vendor/requirejs-text'
   , 'jsx': '../vendor/requirejs-jsx'
-
+  , 'react-router': '../vendor/react-router'
   }
-
-, jsx: { fileExtension: '.jsx', harmony: true }
-
 });
 
-require(['react', 'react-dom', 'react-redux', './store', 'jsx!./components/App'], (React, ReactDOM, ReactRedux, store, App) => {
+require(['react', 'react-dom', 'react-redux', './store', 'jsx!./components/Router'],
+  (React, ReactDOM, ReactRedux, store, Router) => {
+    'use strict';
 
-  'use strict';
-
-  // Render out the main `App` component within the Redux `Provider` which gives nested
-  // components access to the application state reducer
-  ReactDOM.render(
-    React.createElement(ReactRedux.Provider, { store: store }, React.createElement(App, null, null)),
-    document.getElementById('main')
-  )
-
-});
+    // Render out the main `App` component within the Redux `Provider` which gives nested
+    // components access to the application state reducer
+    ReactDOM.render(
+      React.createElement(ReactRedux.Provider, { store }, React.createElement(Router, null, null)),
+      document.getElementById('main')
+    );
+  }
+);
