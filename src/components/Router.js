@@ -1,16 +1,18 @@
-define(['react', 'react-redux', 'react-router', 'jsx!./App', 'jsx!./PagesList'], (React, ReactRedux, ReactRouter, App, PagesList) => {
-  'use strict';
+define(['react', 'react-redux', 'react-router', 'jsx!./App', 'jsx!./PagesList'],
+  (React, ReactRedux, ReactRouter, App, PagesList) => {
+    'use strict';
 
-  const {Route, IndexRoute} = ReactRouter;
+    const {Route, IndexRoute, IndexRedirect} = ReactRouter;
 
-  return function Router () {
-    return (
-      <ReactRouter.Router history={ReactRouter.hashHistory}>
-        <Route path="/" component={App}>
-          <IndexRoute component={PagesList} />
-          <Route path="search" component={App} />
-        </Route>
-      </ReactRouter.Router>
-    );
-  };
-});
+    return () => {
+      return (
+        <ReactRouter.Router history={ReactRouter.hashHistory}>
+          <Route path="/" component={App}>
+            <IndexRoute component={PagesList} />
+          </Route>
+          <Route path="*"><IndexRedirect to="/" /></Route>
+        </ReactRouter.Router>
+      );
+    };
+  }
+);

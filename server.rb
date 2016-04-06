@@ -123,7 +123,7 @@ puts <<BANNER
  888  .d88P Y88b .d8888b   d8888888888 888  .d88P
  8888888P"   "Y8888P" Y88bd88P     888 8888888P"
 
-Design and Art Direction
+Design and Art Direction — Website Audit Tool
 
 Server starting on http://localhost:3000
 

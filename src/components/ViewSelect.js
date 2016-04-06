@@ -11,7 +11,6 @@ define(['react', 'jsx!./ViewSelectOption'], (React, ViewSelectOption) => {
           <div className="uk-dropdown uk-dropdown-bottom">
             <ul className="uk-nav uk-nav-dropdown">
               <ViewSelectOption path="/">Pages List</ViewSelectOption>
-              <ViewSelectOption path="/search">Search</ViewSelectOption>
             </ul>
           </div>
         </div>
