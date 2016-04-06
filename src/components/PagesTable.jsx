@@ -1,6 +1,6 @@
 define(['react', 'react-redux'], (React, ReactRedux) => {
 
-  'use strict'
+  'use strict';
 
   const ToggleIcon = ({ column, sortColumn, sortDirection }) => {
 
@@ -17,7 +17,7 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
 
     return <div></div>
 
-  }
+  };
 
   const PagesTable = ({ pages, sortColumn, sortDirection, makeOnColumnClick }) => {
 
@@ -34,7 +34,7 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
         </tr>
       )
 
-    })
+    });
 
     return (
       <table className='uk-table uk-table-hover'>
@@ -84,21 +84,21 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
       </table>
     )
 
-  }
+  };
 
   const mapStateToProps = state => {
 
-    let pages = state.pages
+    let pages = state.pages;
 
     pages.sort((a, b) => {
 
-      if (a[state.sortColumn] < b[state.sortColumn]) return state.sortDirection === 'ASC' ? -1 : 1
+      if (a[state.sortColumn] < b[state.sortColumn]) return state.sortDirection === 'ASC' ? -1 : 1;
 
-      if (a[state.sortColumn] > b[state.sortColumn]) return state.sortDirection === 'ASC' ? 1 : -1
+      if (a[state.sortColumn] > b[state.sortColumn]) return state.sortDirection === 'ASC' ? 1 : -1;
 
       return 0
 
-    })
+    });
 
     return { 
 
@@ -108,7 +108,7 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
 
     }
 
-  }
+  };
 
   const mapDispatchToProps = dispatch => {
 
@@ -123,8 +123,8 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
     
     }
 
-  }
+  };
 
   return ReactRedux.connect(mapStateToProps, mapDispatchToProps)(PagesTable)
 
-})
+});

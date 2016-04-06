@@ -1,6 +1,6 @@
 define(['react', 'react-redux', 'jsx!./Login', 'jsx!./PagesRefresh'], (React, ReactRedux, Login, PagesRefresh) => {
 
-  'use strict'
+  'use strict';
 
   const Controls = () => {
 
@@ -11,20 +11,20 @@ define(['react', 'react-redux', 'jsx!./Login', 'jsx!./PagesRefresh'], (React, Re
       </div>
     )
 
-  }
+  };
 
   const mapStateToProps = (state) => {
 
     return {}
 
-  }
+  };
 
   const mapDispatchToProps = (dispatch) => {
 
     return {}
 
-  }
+  };
 
   return ReactRedux.connect(mapStateToProps, mapDispatchToProps)(Controls)
 
-})
+});

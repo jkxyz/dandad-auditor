@@ -1,6 +1,6 @@
 define(['react', 'react-redux', '../utils/fetchPages'], (React, ReactRedux, fetchPages) => {
 
-  'use strict'
+  'use strict';
 
   const PagesRefresh = ({ disabled, isRefreshing, onButtonClick }) => {
 
@@ -10,7 +10,7 @@ define(['react', 'react-redux', '../utils/fetchPages'], (React, ReactRedux, fetc
       </button>
     )
 
-  }
+  };
 
   const mapStateToProps = state => {
 
@@ -21,7 +21,7 @@ define(['react', 'react-redux', '../utils/fetchPages'], (React, ReactRedux, fetc
 
     }
 
-  }
+  };
 
   const mapDispatchToProps = dispatch => {
 
@@ -29,11 +29,11 @@ define(['react', 'react-redux', '../utils/fetchPages'], (React, ReactRedux, fetc
 
       onButtonClick: () => {
         
-        dispatch({ type: 'refreshPagesStart' })
+        dispatch({ type: 'refreshPagesStart' });
 
         fetchPages().done(pages => {
 
-          localStorage.dandadAuditorPages = JSON.stringify(pages)
+          localStorage.dandadAuditorPages = JSON.stringify(pages);
 
           dispatch({ type: 'refreshPagesEnd', pages })
 
@@ -43,8 +43,8 @@ define(['react', 'react-redux', '../utils/fetchPages'], (React, ReactRedux, fetc
 
     }
 
-  }
+  };
 
   return ReactRedux.connect(mapStateToProps, mapDispatchToProps)(PagesRefresh)
 
-})
+});

@@ -14,11 +14,11 @@ require.config({
 
 , jsx: { fileExtension: '.jsx', harmony: true }
 
-})
+});
 
 require(['react', 'react-dom', 'react-redux', './store', 'jsx!./components/App'], (React, ReactDOM, ReactRedux, store, App) => {
 
-  'use strict'
+  'use strict';
 
   // Render out the main `App` component within the Redux `Provider` which gives nested
   // components access to the application state reducer
@@ -27,4 +27,4 @@ require(['react', 'react-dom', 'react-redux', './store', 'jsx!./components/App']
     document.getElementById('main')
   )
 
-})
+});

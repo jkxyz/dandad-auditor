@@ -1,8 +1,8 @@
 define(['react', 'jsx!./Controls', 'jsx!./PagesTable'], (React, Controls, PagesTable) => {
 
-  'use strict'
+  'use strict';
 
-  const App = () => {
+  return () => {
 
     return (
       <div className='uk-container uk-container-center'>
@@ -13,6 +13,4 @@ define(['react', 'jsx!./Controls', 'jsx!./PagesTable'], (React, Controls, PagesT
 
   }
 
-  return App
-
-})
+});

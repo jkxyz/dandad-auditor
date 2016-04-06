@@ -1,6 +1,6 @@
 define(['react', 'react-redux'], (React, ReactRedux) => {
 
-  'use strict'
+  'use strict';
 
   const Login = ({ isLoggedIn, isLoggingIn, username, onLoginSubmit }) => {
 
@@ -23,13 +23,13 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
       </div>
     )
 
-  }
+  };
 
   const mapStateToProps = state => {
 
     return state.login
 
-  }
+  };
 
   const mapDispatchToProps = dispatch => {
 
@@ -37,22 +37,22 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
 
       onLoginSubmit: e => {
 
-        const username = e.target.children.username.value
-        const password = e.target.children.password.value
+        const username = e.target.children.username.value;
+        const password = e.target.children.password.value;
 
-        e.preventDefault()
+        e.preventDefault();
 
-        dispatch({ type: 'userStartLogin' })
+        dispatch({ type: 'userStartLogin' });
 
-        const loginReq = $.ajax('/api/login', { data: { username, password }, method: 'POST' })
+        const loginReq = $.ajax('/api/login', { data: { username, password }, method: 'POST' });
 
         loginReq.success(() => {
-          dispatch({ type: 'userEndLogin' })
+          dispatch({ type: 'userEndLogin' });
           dispatch({ type: 'userLogin', username })
-        })
+        });
 
         loginReq.error(() => {
-          alert('There was an error logging in')
+          alert('There was an error logging in');
           dispatch({ type: 'userEndLogin' })
         })
 
@@ -60,8 +60,8 @@ define(['react', 'react-redux'], (React, ReactRedux) => {
 
     }
 
-  }
+  };
 
   return ReactRedux.connect(mapStateToProps, mapDispatchToProps)(Login)
 
-})
+});
