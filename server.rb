@@ -110,4 +110,25 @@ server.mount '/', WEBrick::HTTPServlet::FileHandler, File.dirname(__FILE__), Fil
 
 trap 'INT' do server.shutdown end
 
+puts <<BANNER
+
+-------------------------------------------------
+
+ 8888888b.   .d8888b.            d8888 8888888b.
+ 888  "Y88b d88P  "88b          d88888 888  "Y88b
+ 888    888 Y88b. d88P         d88P888 888    888
+ 888    888  "Y8888P"         d88P 888 888    888
+ 888    888 .d88P88K.d88P    d88P  888 888    888
+ 888    888 888"  Y888P"    d88P   888 888    888
+ 888  .d88P Y88b .d8888b   d8888888888 888  .d88P
+ 8888888P"   "Y8888P" Y88bd88P     888 8888888P"
+
+Design and Art Direction
+
+Server starting on http://localhost:3000
+
+-------------------------------------------------
+
+BANNER
+
 server.start
