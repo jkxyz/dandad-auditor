@@ -1,21 +1,29 @@
-define(['react'], (React) => {
+define(['react', 'react-redux', 'jsx!./LoginControl'], (React, ReactRedux, LoginControl) => {
   'use strict';
 
-  return ({username, className}) => {
-    if (username !== null) {
-      return <span>Logged in as {username}</span>;
-    }
-
-    return (
-      <div className={"uk-button-dropdown " + className} data-uk-dropdown>
-        <button className="uk-button uk-button-primary">
-          Login
-        </button>
-        <div className="uk-dropdown uk-dropdown-bottom">
-          <input type="text" placeholder="Username" />
-          <input type="password" placeholder="Password" />
-        </div>
-      </div>
-    );
+  const Login = ({username, handleLogin, className}) => {
+    return <LoginControl username={username} onSubmit={handleLogin} className={className} />;
   };
+
+  const mapStateToProps = state => {
+    return {
+      username: state.username
+    };
+  };
+
+  const mapDispatchToProps = dispatch => {
+    return {
+      handleLogin(event) {
+        event.preventDefault();
+
+        const username = event.target.children.username.value;
+
+        fetch('/api/login', {method: 'POST', body: new FormData(event.target)}).then(
+          res => (res.status === 200 && dispatch({type: 'login', username})) || alert('There was an error logging in')
+        );
+      }
+    };
+  };
+
+  return ReactRedux.connect(mapStateToProps, mapDispatchToProps)(Login);
 });

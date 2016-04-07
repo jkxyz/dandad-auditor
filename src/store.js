@@ -3,14 +3,14 @@ define(['redux'], (Redux) => {
 
   const initialState = {
     username: null
-  , allPages: JSON.parse(localStorage.dandadAuditorPages || '[]')
+  , allPages: JSON.parse(window.localStorage.dandadAuditorPages || '[]')
   };
 
   const reducer = (state = initialState, action) => {
     console.log(action);
+
     switch (action.type) {
       case 'login': return Object.assign({}, state, {username: action.username});
-      case 'route': return Object.assign({}, state, {currentPath: action.path});
     }
 
     return state;

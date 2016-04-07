@@ -1,12 +1,12 @@
 define(['react', 'react-redux', 'jsx!./ViewSelect', 'jsx!./Login', 'jsx!./PagesListTable'], (React, ReactRedux, ViewSelect, Login, PagesListTable) => {
   'use strict';
 
-  const PagesList = ({pages, username}) => {
+  const PagesList = ({pages, username, handleLogin}) => {
     return (
       <div>
         <div className="uk-margin-top">
           <ViewSelect currentPage="Pages List" className="uk-display-inline-block" />
-          <Login username={username} className="uk-float-right" />
+          <Login className="uk-float-right" />
         </div>
         <PagesListTable pages={pages} />
       </div>
@@ -16,7 +16,6 @@ define(['react', 'react-redux', 'jsx!./ViewSelect', 'jsx!./Login', 'jsx!./PagesL
   const mapStateToProps = state => {
     return {
       pages: state.allPages
-    , username: state.username
     };
   };
 
