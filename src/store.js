@@ -1,9 +1,10 @@
-define(['redux'], (Redux) => {
+define(['redux', './utils/fetchPages'], (Redux, fetchPages) => {
   'use strict';
 
   const initialState = {
     username: null,
-    allPages: JSON.parse(window.localStorage.dandadAuditorPages || '[]')
+    allPages: JSON.parse(window.localStorage.dandadAuditorPages || '[]'),
+    isRefreshingPages: false
   };
 
   const reducer = (state = initialState, action) => {
@@ -32,6 +33,14 @@ define(['redux'], (Redux) => {
 
       case 'initLogin':
         return Object.assign({}, state, {username: action.username});
+
+      case 'refreshPages':
+        fetchPages().then(pages => store.dispatch({type: 'refreshPagesComplete', pages}));
+
+        return Object.assign({}, state, {isRefreshingPages: true});
+
+      case 'refreshPagesComplete':
+        return Object.assign({}, state, {isRefreshingPages: false, allPages: action.pages});
     }
 
     return state;
