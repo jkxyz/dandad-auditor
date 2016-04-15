@@ -3,7 +3,7 @@ define(['react'], (React) => {
 
   return ({children}) => {
     return (
-      <div className="uk-container uk-container-center">
+      <div className='uk-container uk-container-center'>
         {children}
       </div>
     );

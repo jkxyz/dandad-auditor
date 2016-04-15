@@ -16,11 +16,11 @@ define(['react', 'react-redux', 'jsx!./LoginControl'], (React, ReactRedux, Login
       handleLogin(event) {
         event.preventDefault();
 
-        const username = event.target.children.username.value;
-
-        fetch('/api/login', {method: 'POST', body: new FormData(event.target)}).then(
-          res => (res.status === 200 && dispatch({type: 'login', username})) || alert('There was an error logging in')
-        );
+        dispatch({
+          type: 'login',
+          username: event.target.children.username.value,
+          password: event.target.children.password.value
+        });
       }
     };
   };

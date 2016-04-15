@@ -3,7 +3,7 @@ define(['react'], (React) => {
 
   return ({pages}) => {
     return (
-      <table className="uk-table">
+      <table className='uk-table'>
         <thead>
           <tr>
             <th>ID</th>

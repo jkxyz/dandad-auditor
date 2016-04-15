@@ -22,12 +22,12 @@ define([], function () {
           let rows = doc.querySelectorAll('#result_list tbody tr');
 
           [].forEach.call(rows, row => pageDetails.push({
-            id:           Number(row.querySelector('th:nth-child(2) a').attributes.href.value.match(/\/([0-9]+)\/$/)[1])
-          , title:        row.querySelector('th:nth-child(2) a').text
-          , slug:         row.querySelector('td:nth-child(3)').innerHTML
-          , contentType:  row.querySelector('td:nth-child(4)').innerHTML
-          , isPublished:  row.querySelector('td:nth-child(5) input').checked
-          , isRestricted: row.querySelector('td:nth-child(7) img').alt === 'True'
+            id:           Number(row.querySelector('th:nth-child(2) a').attributes.href.value.match(/\/([0-9]+)\/$/)[1]),
+            title:        row.querySelector('th:nth-child(2) a').text,
+            slug:         row.querySelector('td:nth-child(3)').innerHTML,
+            contentType:  row.querySelector('td:nth-child(4)').innerHTML,
+            isPublished:  row.querySelector('td:nth-child(5) input').checked,
+            isRestricted: row.querySelector('td:nth-child(7) img').alt === 'True'
           }));
         });
 

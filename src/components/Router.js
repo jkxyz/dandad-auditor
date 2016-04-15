@@ -7,10 +7,10 @@ define(['react', 'react-redux', 'react-router', 'jsx!./App', 'jsx!./PagesList'],
     return () => {
       return (
         <ReactRouter.Router history={ReactRouter.hashHistory}>
-          <Route path="/" component={App}>
+          <Route path='/' component={App}>
             <IndexRoute component={PagesList} />
           </Route>
-          <Route path="*"><IndexRedirect to="/" /></Route>
+          <Route path='*'><IndexRedirect to='/' /></Route>
         </ReactRouter.Router>
       );
     };
