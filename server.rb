@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
 
+# Serves the static client files for the D&AD Auditor tool and manages authentication to the CMS to circumvent
+# browser cross-origin security features. Several HTTP endpoints are provided to login, determine the logged in user,
+# and proxy authenticated requests to www.dandad.org.
+#
 # Usage:
 #
 #   ruby server.rb
@@ -35,8 +39,6 @@ SERVER.mount_proc('/api/login') do |req, res|
   username = req.query['username'].strip
   password = req.query['password'].strip
 
-  res['Content-Type'] = 'text/plain'
-
   Net::HTTP.start('www.dandad.org', 80) do |http|
     login_form_res = http.request(Net::HTTP::Get.new(URI('http://www.dandad.org/manage/')))
     login_submit_req = Net::HTTP::Post.new(URI('http://www.dandad.org/manage/'))
@@ -50,7 +52,6 @@ SERVER.mount_proc('/api/login') do |req, res|
     )
 
     login_submit_req['Cookie'] = login_form_res['Set-Cookie']
-
     login_submit_res = http.request(login_submit_req)
 
     unless login_submit_res.is_a?(Net::HTTPFound)
