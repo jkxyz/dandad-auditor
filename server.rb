@@ -1,114 +1,85 @@
 #!/usr/bin/env ruby
 
-# A WEBrick server that serves the static files in this directory and allows
-# requests to be proxied to www.dandad.org, bypassing cross-origin restrictions
-# and retaining the logged in user session.
+# Usage:
 #
-# Listens on http://localhost:3000
+#   ruby server.rb
 #
-# GET  /login -- Returns the currently signed in username as plain text or a 400 error
-# POST /login -- Takes a `username` and `password` parameter to login to the CMS
-# GET  /get   -- Takes a `url` parameter to request with the stored cookie
+# HTTP API Methods:
+#
+#   GET  /api/username
+#     If an authenticated session cookie and username exists, return the username as a text/plain response.
+#
+#   POST /api/login
+#     Parameters: username, password
+#     Store in memory an authenticated CMS session cookie for the provided `username` and `password`. Return 200 OK
+#     for a successful login attempt and 403 Forbidden for a failed login attempt.
+#
+#   GET  /api/get
+#     Parameters: url
+#     Return a 200 OK response with the body received from a request to `url`, using the contents of the stored
+#     session cookie to authenticate as a logged-in user of the CMS.
 
 require 'webrick'
 require 'net/http'
 
-session_cookie = nil
-session_username = nil
+SESSION = Struct.new(:cookie, :username).new
+SERVER  = WEBrick::HTTPServer.new(Port: 3000)
 
-# An array of arrays where the first element is a RegExp to match the request line
-# and the second is a Proc which returns the response status and body
-routes = [
-  [
-    /^GET \/api\/login/, -> (req) {
+SERVER.mount_proc('/api/username') do |req, res|
+  res.status = SESSION.username ? 200 : 404
+  res.body = SESSION.username || ''
+  res['Content-Type'] = 'text/plain'
+end
 
-      return 200, session_username + "\n" if session_username
-
-      return 400, "Not logged in\n"
-    }
-  ],
-  [
-    # Receive a username and password to make a login request to the CMS and store
-    # the cookie with the session ID
-    /^POST \/api\/login/, -> (req) {
-
-      username, password = req.query['username'], req.query['password']
-
-      # Fail if the username and password aren't found in the request
-      return 400, "Username and Password required\n" unless username and password
-
-      Net::HTTP.start('www.dandad.org', 80) do |http|
-        # Make an initial request to get the login form CSRF token
-        login_form_res = http.request(Net::HTTP::Get.new(URI('http://www.dandad.org/manage/')))
-
-        token = login_form_res.body.match(/name='csrfmiddlewaretoken' value='(.+)'/)[1]
-
-        login_submit_req = Net::HTTP::Post.new(URI('http://www.dandad.org/manage/'))
-        
-        login_submit_req.set_form_data(
-          'csrfmiddlewaretoken'    => token,
-          'username'               => username.strip,
-          'password'               => password.strip,
-          'this_is_the_login_form' => 1, # Yep...
-          'next'                   => '/manage/'
-        )
-
-        # Submit login request with the cookie from the previous request
-        login_submit_req['Cookie'] = login_form_res['Set-Cookie']
-
-        res = http.request(login_submit_req)
-
-        return 403, "Bad Login\n" unless res.is_a?(Net::HTTPFound)
-
-        session_cookie = res['Set-Cookie']
-        session_username = username.strip
-      end
-
-      return 200, "OK\n"
-    }
-  ],
-  [
-    /^GET \/api\/get/, -> (req) {
-
-      return 400, "URL required\n" unless url = req.query['url']
-
-      return 403, "Not logged in\n" unless session_cookie
-
-      return 400, "URL host is not www.dandad.org\n" unless URI(url).host == 'www.dandad.org'
-
-      Net::HTTP.start('www.dandad.org', 80) do |http|
-        request = Net::HTTP::Get.new(URI(url))
-
-        # Use the cookie containing the authenticated session ID
-        request['Cookie'] = session_cookie
-        
-        # Pass the returned response body back to the client
-        return 200, http.request(request).body
-      end
-    }
-  ]
-]
-
-server = WEBrick::HTTPServer.new Port: 3000, DocumentRoot: '.'
-
-# Mount the routes at `/api` so that files can still be accessed at the document root
-server.mount_proc '/api' do |req, res|
-
-  begin
-    # Call the first route that matches the request line and set the response
-    res.status, res.body = routes.select { |r| req.request_line =~ r[0] }.first[1].(req)
-  rescue NoMethodError => e
-    res.status, res.body = 404, "Not Found\n"
-  end
+SERVER.mount_proc('/api/login') do |req, res|
+  username = req.query['username'].strip
+  password = req.query['password'].strip
 
   res['Content-Type'] = 'text/plain'
 
+  Net::HTTP.start('www.dandad.org', 80) do |http|
+    login_form_res = http.request(Net::HTTP::Get.new(URI('http://www.dandad.org/manage/')))
+    login_submit_req = Net::HTTP::Post.new(URI('http://www.dandad.org/manage/'))
+
+    login_submit_req.set_form_data(
+      'csrfmiddlewaretoken'    => login_form_res.body.match(/name='csrfmiddlewaretoken' value='(.+)'/)[1],
+      'username'               => username,
+      'password'               => password,
+      'this_is_the_login_form' => 1,
+      'next'                   => '/manage/'
+    )
+
+    login_submit_req['Cookie'] = login_form_res['Set-Cookie']
+
+    login_submit_res = http.request(login_submit_req)
+
+    unless login_submit_res.is_a?(Net::HTTPFound)
+      res.status = 403
+      return
+    end
+
+    SESSION.cookie = login_submit_res['Set-Cookie']
+    SESSION.username = username
+    res.status = 200
+  end
 end
 
-# Serve files from the directory root, forcing the Pragma header to 'no-cache'
-server.mount '/', WEBrick::HTTPServlet::FileHandler, File.dirname(__FILE__), FileCallback: -> (req, res) { res['Pragma'] = 'no-cache' }
+SERVER.mount_proc('/api/get') do |req, res|
+  Net::HTTP.start('www.dandad.org', 80) do |http|
+    request = Net::HTTP::Get.new(URI(req.query['url']))
+    request['Cookie'] = SESSION.cookie
 
-trap 'INT' do server.shutdown end
+    res.status = 200
+    res.body = http.request(request).body
+    res['Content-Type'] = 'text/html'
+  end
+end
+
+SERVER.mount('/', WEBrick::HTTPServlet::FileHandler, File.dirname(__FILE__),
+  FileCallback: -> (req, res) { res['Pragma'] = 'no-cache' }
+)
+
+trap 'INT' do SERVER.shutdown end
 
 puts <<BANNER
 
@@ -131,4 +102,6 @@ Server starting on http://localhost:3000
 
 BANNER
 
-server.start
+system('open http://localhost:3000') if RUBY_PLATFORM.include?('darwin')
+
+SERVER.start
