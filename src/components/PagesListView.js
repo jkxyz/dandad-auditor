@@ -1,9 +1,20 @@
 define(
   ['react', 'react-redux', '../actions', 'jsx!./LoginButton', 'jsx!./ViewSelector'],
-  (React, ReactRedux, {fetchPages}, LoginButton, ViewSelector) => {
+  (React, ReactRedux, {fetchPages, sortPages}, LoginButton, ViewSelector) => {
     'use strict';
 
-    const PagesListView = ({isLoggedIn, isRefreshingPages, handleRefreshPages, pages}) => {
+    const PagesListView = ({isLoggedIn, isRefreshingPages, handleRefreshPages, pages, handleSortPages, sortDirection, sortColumn}) => {
+      const Column = ({column, children}) => {
+        return (
+          <th onClick={() => handleSortPages(column)}>
+            {children}
+            {sortColumn === column
+              ? <i className={'uk-margin-small-left ' + (sortDirection === 'ASC' ? 'uk-icon-caret-up' : 'uk-icon-caret-down')} />
+              : null}
+          </th>
+        );
+      };
+
       return (
         <div className='uk-container uk-container-center'>
           <div className='uk-margin-top'>
@@ -20,12 +31,12 @@ define(
           <table className='uk-table'>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Slug</th>
-                <th>Type</th>
-                <th>Published?</th>
-                <th>Restricted?</th>
+                <Column column='id'>ID</Column>
+                <Column column='title'>Title</Column>
+                <Column column='slug'>Slug</Column>
+                <Column column='contentType'>Type</Column>
+                <Column column='isPublished'>Published?</Column>
+                <Column column='isRestricted'>Restricted?</Column>
               </tr>
             </thead>
             <tbody>
@@ -49,7 +60,9 @@ define(
       return {
         isLoggedIn: state.session.isLoggedIn,
         isRefreshingPages: state.pages.isRefreshingPages,
-        pages: state.pages.pagesList
+        pages: state.pages.pagesList,
+        sortColumn: state.pages.sortColumn,
+        sortDirection: state.pages.sortDirection
       };
     };
 
@@ -57,6 +70,9 @@ define(
       return {
         handleRefreshPages() {
           dispatch(fetchPages());
+        },
+        handleSortPages(column) {
+          dispatch(sortPages(column));
         }
       };
     };

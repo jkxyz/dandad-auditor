@@ -70,11 +70,16 @@ define(
       return {type: 'FETCH_PAGES_END', pages: JSON.parse(window.localStorage.dandadAuditorPages || '[]')};
     }
 
+    function sortPages(column) {
+      return {type: 'SORT_PAGES', column};
+    }
+
     return {
       login,
       initUsername,
       fetchPages,
-      initPages
+      initPages,
+      sortPages
     };
   }
 );
