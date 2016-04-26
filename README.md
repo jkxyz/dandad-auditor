@@ -8,7 +8,6 @@ Requirements
 ------------
 
 * Ruby 2.x
-* Firefox 44+ or Chrome 45+ (for ES2015 support)
 
 Usage
 -----
@@ -26,13 +25,14 @@ Then open [http://localhost:3000](http://localhost:3000) to launch the web appli
 Constraints and Design 
 ----------------------
 
-This application needs to be simple to launch and develop on a stock non-root Mac OS X installation in order
-to be usable by non-technical staff. The web server and API uses vanilla Ruby WEBrick without any additional 
-libraries. To remove the need for any additional build process the JavaScript frontend uses in-browser RequireJS.
+The application should be simple to launch, with no dependencies besides those available to a non-root Mac OS X user.
 
-The frontend is a React and Redux application written in ES2015.
+The web server uses vanilla Ruby WEBrick with Proc handlers, and the client-side JavaScript is sourced from the
+[JSPM](http://jspm.io/) CDN with SystemJS for module loading and Babel transpilation. This sacrifices the speed of a
+bundled client package for reproducible installations without a build process.
 
-All of the page crawling logic is performed client-side, with the API providing the ability to login, store
-the authenticated session cookie, and perform authenticated cross-origin requests to dandad.org via a simple proxy end-point.
-The application is intended to be run locally on a single user's machine, removing the need to store session data, and
-therefore the script will only store a single persistent authenticated cookie in-memory.
+The frontend is a React, Redux, and ReactRouter application written in ES2015.
+
+All of the page crawling logic and data persistence is managed client-side, with the API storing an ephemeral
+session cookie for performing authenticated cross-origin requests to www.dandad.org. The application is intended to be
+run locally on the user's machine, so no session data is stored.
