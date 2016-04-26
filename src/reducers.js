@@ -1,4 +1,4 @@
-import {createStore, combineReducers, applyMiddleware} from 'npm:redux'
+import {createStore, combineReducers, applyMiddleware} from 'redux'
 import {LOGIN_START, LOGIN_END, FETCH_PAGES_START, FETCH_PAGES_END, init} from './actions';
 
 const INITIAL_STATE = {

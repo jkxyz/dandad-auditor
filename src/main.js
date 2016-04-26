@@ -1,6 +1,6 @@
-import React from 'npm:react'
-import ReactDOM from 'npm:react-dom'
-import {Provider} from 'npm:react-redux'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import {Provider} from 'react-redux'
 import Routes from './components/Routes'
 import {store} from './reducers'
 

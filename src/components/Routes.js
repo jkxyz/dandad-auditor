@@ -1,5 +1,5 @@
-import React from 'npm:react'
-import {Router, hashHistory, Route, IndexRedirect} from 'npm:react-router'
+import React from 'react'
+import {Router, hashHistory, Route, IndexRedirect} from 'react-router'
 import PagesListView from './PagesListView'
 
 export default () => {

@@ -1,5 +1,5 @@
-import React from 'npm:react'
-import {Link} from 'npm:react-router'
+import React from 'react'
+import {Link} from 'react-router'
 
 export default ({current}) => {
   return (

@@ -1,5 +1,5 @@
-import React from 'npm:react'
-import {connect} from 'npm:react-redux'
+import React from 'react'
+import {connect} from 'react-redux'
 import {fetchPages} from '../actions'
 import LoginButton from './LoginButton'
 import ViewSelector from './ViewSelector'

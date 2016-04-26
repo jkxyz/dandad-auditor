@@ -1,5 +1,5 @@
-import React from 'npm:react'
-import {connect} from 'npm:react-redux'
+import React from 'react'
+import {connect} from 'react-redux'
 import {login} from '../actions'
 
 let LoginButton = ({className, handleLogin, isLoggedIn, isLoggingIn, username}) => {
