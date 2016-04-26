@@ -4,10 +4,6 @@
     <meta charset="utf-8">
     <title>D&amp;AD Audit</title>
     <link rel="stylesheet" href="vendor/uikit.gradient.css">
-    <script src="vendor/jquery.js"></script>
-    <script src="vendor/uikit.js"></script>
-    <script src="https://jspm.io/system@0.19.js"></script>
-    <script>System.config({transpiler: 'babel'}); System.import('./src/main.js');</script>
     <style>
       /* Spinner source: http://tobiasahlin.com/spinkit/ */
       .spinner-container{position:absolute;height:100%;width:100%;display:flex;align-items:center;background:#fafafa}.spinner{width:40px;height:20px;background-color:#fdd106;margin:0 auto;-webkit-animation:sk-rotateplane 1.2s infinite ease-in-out;animation:sk-rotateplane 1.2s infinite ease-in-out}.spinner:before,.spinner:after{content:'';position:absolute;width:0;border-left:20px solid transparent;border-right:20px solid transparent}.spinner:before{bottom:100%;border-bottom:15px solid #fdd106}.spinner:after{top:100%;width:0;border-top:15px solid #fdd106}@-webkit-keyframes sk-rotateplane{0%{-webkit-transform:perspective(120px)}50%{-webkit-transform:perspective(120px) rotateY(180deg)}100%{-webkit-transform:perspective(120px) rotateY(180deg) rotateX(180deg)}}@keyframes sk-rotateplane{0%{transform:perspective(120px) rotateX(0deg) rotateY(0deg);-webkit-transform:perspective(120px) rotateX(0deg) rotateY(0deg)}50%{transform:perspective(120px) rotateX(-180.1deg) rotateY(0deg);-webkit-transform:perspective(120px) rotateX(-180.1deg) rotateY(0deg)}100%{transform:perspective(120px) rotateX(-180deg) rotateY(-179.9deg);-webkit-transform:perspective(120px) rotateX(-180deg) rotateY(-179.9deg)}}
@@ -17,5 +13,9 @@
     <div id="main">
       <div class="spinner-container"><div class="spinner"></div></div>
     </div>
+    <script src="vendor/jquery.js"></script>
+    <script src="vendor/uikit.js"></script>
+    <script src="https://jspm.io/system@0.19.js"></script>
+    <script>System.config({transpiler: 'babel'}); System.import('./src/main.js');</script>
   </body>
 </html>
