@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {fetchPages} from '../actions'
+import fetchPages from '../actions/fetchPages'
 import LoginButton from './LoginButton'
 import ViewSelector from './ViewSelector'
 
@@ -25,7 +25,7 @@ let PagesListView = ({isLoggedIn, isRefreshingPages, handleRefreshPages, pages, 
           disabled={!isLoggedIn || isRefreshingPages}
           onClick={handleRefreshPages}>
           {isRefreshingPages ? <i className='uk-icon-refresh uk-icon-spin uk-margin-right' /> : null}
-          Refresh Pages
+          Refresh
         </button>
         <LoginButton className='uk-float-right' />
       </div>

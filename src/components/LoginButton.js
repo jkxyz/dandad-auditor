@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {login} from '../actions'
+import login from '../actions/login'
 
 let LoginButton = ({className, handleLogin, isLoggedIn, isLoggingIn, username}) => {
   if (isLoggedIn) {

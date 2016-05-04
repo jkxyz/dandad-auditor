@@ -1,50 +1,22 @@
-export const LOGIN_START = 'LOGIN_START';
-export const LOGIN_END = 'LOGIN_END';
-
-export function loginStart() {
-  return {type: LOGIN_START}
-}
-
-export function loginEnd(username) {
-  return {type: LOGIN_END, username}
-}
-
-/**
- * Dispatches to display that login has been submitted, and dispatches again with the updated login status and username.
- */
-export function login(username, password) {
-  return dispatch => {
-    dispatch(loginStart());
-
-    let formData = new FormData();
-
-    formData.append('username', username);
-    formData.append('password', password);
-
-    fetch('/api/login', {method: 'POST', body: formData}).then(
-      response => dispatch(loginEnd((response.status === 200 && username) || null))
-    )
-  }
-}
-
 export const FETCH_PAGES_START = 'FETCH_PAGES_START';
 export const FETCH_PAGES_END = 'FETCH_PAGES_END';
 
-const LOCAL_STORAGE_PAGES = 'dandadAuditorPages';
+export const LOCAL_STORAGE_PAGES = 'dandadAuditorPages';
 
-export function fetchPagesStart() {
-  return {type: FETCH_PAGES_START}
+export function fetchPagesStart () {
+  return {
+    type: FETCH_PAGES_START
+  }
 }
 
-export function fetchPagesEnd(pages) {
-  return {type: FETCH_PAGES_END, pages}
+export function fetchPagesEnd (pages) {
+  return {
+    type: FETCH_PAGES_END,
+    pages
+  }
 }
 
-/**
- * Dispatches to display that pages are being fetched, and dispatches again after fetching all page metadata from
- * the CMS pages list. Crawls the pages list to convert the HTML table into the stored JSON data structure.
- */
-export function fetchPages() {
+export default function fetchPages () {
   return dispatch => {
     dispatch(fetchPagesStart());
 
@@ -85,21 +57,5 @@ export function fetchPages() {
         dispatch(fetchPagesEnd(pageDetails));
       });
     })
-  }
-}
-
-/**
- * Dispatches to initialise the running app state from persisted data: session username, pages in localStorage.
- */
-export function init() {
-  return dispatch => {
-    dispatch(loginStart());
-    dispatch(fetchPagesStart());
-
-    fetch('/api/username').then(response => response.status === 200 && response.text()).then(
-      username => dispatch(loginEnd(username || null))
-    );
-
-    dispatch(fetchPagesEnd(JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_PAGES) || '[]')));
   }
 }
