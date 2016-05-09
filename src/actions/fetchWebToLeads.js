@@ -1,0 +1,54 @@
+import fetchAndParse from '../utils/fetchAndParse'
+import slugToUrl from '../utils/slugToUrl'
+
+export const FETCH_WEB_TO_LEADS_START = 'FETCH_WEB_TO_LEADS_START'
+export const FETCH_WEB_TO_LEADS_END = 'FETCH_WEB_TO_LEADS_END'
+
+export const LOCAL_STORAGE_WEB_TO_LEADS = 'dandadAuditorWebToLeads'
+
+export function fetchWebToLeadsStart () {
+  return { type: FETCH_WEB_TO_LEADS_START }
+}
+
+export function fetchWebToLeadsEnd (webToLeads) {
+  return { type: FETCH_WEB_TO_LEADS_END, webToLeads }
+}
+
+function pageHasWebToLead (page) {
+  return page && page.querySelector('.web-to-lead') !== null
+}
+
+export default function fetchWebToLeads () {
+  return (dispatch, getState) => {
+    dispatch(fetchWebToLeadsStart())
+
+    let pageUrls = getState().pages.pagesList.map(page => slugToUrl(page.slug))
+    let domParser = new DOMParser()
+
+    Promise.all(pageUrls.map(fetchAndParse.bind(undefined, domParser))).then(
+      pages => {
+        try {
+          let webToLeads = pages.filter(pageHasWebToLead).map(page => {
+            let webToLead = page.querySelector('.web-to-lead')
+            let form = webToLead.querySelector('form')
+
+            return {
+              id: webToLead.id.match(/^web-to-lead-([0-9]+)/)[1],
+              title: webToLead.querySelector('h2').innerText,
+              trackingCode: form.dataset.trackingcode,
+              salesforceListId: form.children['id_salesforce_list_id'].value,
+              subject: form.children['id_subject'].value,
+              pageSlug: new URL(page.url).pathname.match(/^\/en\/(.*)\//)[1]
+            }
+          })
+          
+          window.localStorage.setItem(LOCAL_STORAGE_WEB_TO_LEADS, JSON.stringify(webToLeads))
+          dispatch(fetchWebToLeadsEnd(webToLeads))
+        } catch (e) {
+          alert('There was an error fetching web to leads')
+          dispatch(fetchWebToLeadsEnd(getState().webToLeads.list))
+        }
+      }
+    )
+  }
+}
