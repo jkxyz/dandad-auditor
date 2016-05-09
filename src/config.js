@@ -7,6 +7,6 @@ System.config({
     'redux': 'npm:redux@3.5',
     'react-router': 'npm:react-router@2.3'
   }
-});
+})
 
-System.import('./src/main.js');
+System.import('./src/main.js')
