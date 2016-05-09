@@ -75,7 +75,9 @@ let mapStateToProps = state => {
       anchor.href = 'data:text/csv;charset=UTF-8,' + encodeURI(csv)
       anchor.download = `Pages ${Date.now()}`
 
+      document.body.appendChild(anchor)
       anchor.click()
+      anchor.remove()
     }
   };
 };

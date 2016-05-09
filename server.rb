@@ -103,6 +103,6 @@ Server starting on http://localhost:3000
 
 BANNER
 
-system('open http://localhost:3000') if RUBY_PLATFORM.include?('darwin')
+system('sleep 2; open http://localhost:3000') if RUBY_PLATFORM.include?('darwin')
 
 SERVER.start

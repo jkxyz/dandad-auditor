@@ -10,6 +10,8 @@ let mapStateToProps = state => {
     webToLeads: state.webToLeads.list,
     isRefreshDisabled: state.webToLeads.isRefreshing || !state.session.isLoggedIn,
     isRefreshing: state.webToLeads.isRefreshing,
+    progressDone: state.webToLeads.progress.done,
+    progressTotal: state.webToLeads.progress.total,
     handleDownload () {
       let csv = arrayToCsv(state.webToLeads.list)
       let anchor = document.createElement('a')
@@ -31,7 +33,16 @@ let mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  ({ webToLeads, isRefreshDisabled, isRefreshing, handleRefresh, handleDownload }) => {
+  ({ webToLeads, isRefreshDisabled, isRefreshing, progressDone, progressTotal, handleRefresh, handleDownload }) => {
+    let progressBar = isRefreshing ? (
+        <div className='uk-progress uk-margin'>
+          <div
+            className='uk-progress-bar'
+            style={ {width: (progressDone/progressTotal) * 100 + '%'} }>
+          </div>
+        </div>
+      ) : null
+
     return (
       <div className='uk-container uk-container-center'>
         <div className='uk-margin-top'>
@@ -48,6 +59,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
           </button>
           <LoginButton className='uk-float-right' />
         </div>
+        { progressBar }
         <table className='uk-table'>
           <thead>
             <tr>
