@@ -1,26 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import ViewSelector from './ViewSelector'
-import LoginButton from './LoginButton'
 import fetchWebToLeads from '../actions/fetchWebToLeads'
-import arrayToCsv from '../utils/arrayToCsv'
+import Header from './Header'
+import DownloadCSVButton from './DownloadCSVButton'
+import RefreshButton from './RefreshButton'
+import RefreshProgressBar from './RefreshProgressBar'
 
 let mapStateToProps = state => {
   return {
-    webToLeads: state.webToLeads.list,
-    isRefreshDisabled: state.webToLeads.isRefreshing || !state.session.isLoggedIn,
-    isRefreshing: state.webToLeads.isRefreshing,
-    progressDone: state.webToLeads.progress.done,
-    progressTotal: state.webToLeads.progress.total,
-    handleDownload () {
-      let csv = arrayToCsv(state.webToLeads.list)
-      let anchor = document.createElement('a')
-
-      anchor.href = 'data:text/csv;charset=UTF-8,' + encodeURI(csv)
-      anchor.download = `Web to Leads ${Date.now()}`
-
-      anchor.click()
-    }
+    webToLeads: state.webToLeads.list
   }
 }
 
@@ -33,33 +21,22 @@ let mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  ({ webToLeads, isRefreshDisabled, isRefreshing, progressDone, progressTotal, handleRefresh, handleDownload }) => {
-    let progressBar = isRefreshing ? (
-        <div className='uk-progress uk-margin'>
-          <div
-            className='uk-progress-bar'
-            style={ {width: (progressDone/progressTotal) * 100 + '%'} }>
-          </div>
-        </div>
-      ) : null
-
+  ({ webToLeads, handleRefresh }) => {
     return (
       <div className='uk-container uk-container-center'>
-        <div className='uk-margin-top'>
-          <ViewSelector current='Web to Leads' />
-          <a className='uk-button uk-margin-left' onClick={ handleDownload }>
-            Download CSV
-          </a>
-          <button
-            className='uk-button uk-button-primary uk-margin-left'
+        <Header currentView='Web to Leads'>
+          <DownloadCSVButton
+            className='uk-margin-left'
+            data={ webToLeads }
+            filePrefix='Web to Leads'
+          />
+          <RefreshButton
+            className='uk-margin-left'
             onClick={ handleRefresh }
-            disabled={ isRefreshDisabled }>
-            { isRefreshing ? <i className='uk-icon-refresh uk-icon-spin uk-margin-right' /> : null }
-            Refresh
-          </button>
-          <LoginButton className='uk-float-right' />
-        </div>
-        { progressBar }
+            prefix='webToLeads'
+          />
+        </Header>
+        <RefreshProgressBar prefix='webToLeads' />
         <table className='uk-table'>
           <thead>
             <tr>

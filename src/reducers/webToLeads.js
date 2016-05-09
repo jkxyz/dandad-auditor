@@ -16,7 +16,10 @@ export default function webToLeads (state = INITIAL_STATE, action) {
     return {
       ...state,
       isRefreshing: true,
-      progress: { done: 0, total: action.total }
+      progress: {
+        done: 0,
+        total: action.total
+      }
     }
 
   case FETCH_WEB_TO_LEADS_END:
@@ -30,8 +33,8 @@ export default function webToLeads (state = INITIAL_STATE, action) {
     return {
       ...state,
       progress: {
-        done: ++state.progress.done,
-        total: state.progress.total
+        ...state.progress,
+        done: ++state.progress.done
       }
     }
 

@@ -1,19 +1,44 @@
-import { FETCH_PAGES_START, FETCH_PAGES_END } from '../actions/fetchPages'
+import {
+  FETCH_PAGES_START,
+  FETCH_PAGES_END,
+  FETCH_PAGES_PROGRESS
+} from '../actions/fetchPages'
 
 const INITIAL_STATE = {
-  isRefreshingPages: false,
-  pagesList: []
-};
+  list: [],
+  isRefreshing: false,
+  progress: { done: 0, total: null }
+}
 
 export default function pages (state = INITIAL_STATE, action) {
   switch (action.type) {
   case FETCH_PAGES_START:
-    return { ...state, isRefreshingPages: true };
+    return {
+      ...state,
+      isRefreshing: true,
+      progress: {
+        done: 0,
+        total: action.total
+      }
+    }
 
   case FETCH_PAGES_END:
-    return { ...state, isRefreshingPages: false, pagesList: action.pages };
+    return {
+      ...state,
+      isRefreshing: false,
+      list: action.pages
+    }
+
+  case FETCH_PAGES_PROGRESS:
+    return {
+      ...state,
+      progress: {
+        ...state.progress,
+        done: ++state.progress.done
+      }
+    }
 
   default:
-    return state;
+    return state
   }
 }

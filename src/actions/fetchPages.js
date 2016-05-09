@@ -1,61 +1,62 @@
-export const FETCH_PAGES_START = 'FETCH_PAGES_START';
-export const FETCH_PAGES_END = 'FETCH_PAGES_END';
+import _fetchAndParse from '../utils/fetchAndParse'
 
-export const LOCAL_STORAGE_PAGES = 'dandadAuditorPages';
+export const FETCH_PAGES_START = 'FETCH_PAGES_START'
+export const FETCH_PAGES_END = 'FETCH_PAGES_END'
+export const FETCH_PAGES_PROGRESS = 'FETCH_PAGES_PROGRESS'
 
-export function fetchPagesStart () {
-  return {
-    type: FETCH_PAGES_START
-  }
+export const LOCAL_STORAGE_PAGES = 'dandadAuditorPages'
+
+export function fetchPagesStart (total = null) {
+  return { type: FETCH_PAGES_START, total }
 }
 
 export function fetchPagesEnd (pages) {
-  return {
-    type: FETCH_PAGES_END,
-    pages
-  }
+  return { type: FETCH_PAGES_END, pages }
+}
+
+export function fetchPagesProgress () {
+  return { type: FETCH_PAGES_PROGRESS }
 }
 
 export default function fetchPages () {
-  return dispatch => {
-    dispatch(fetchPagesStart());
+  return (dispatch, getState) => {
+    let domParser = new DOMParser()
+    let fetchAndParse = _fetchAndParse.bind(undefined, domParser)
 
-    let domParser = new DOMParser();
+    fetchAndParse('http://www.dandad.org/manage/pages/basepage/').then(firstCMSPage => {
+      let lastCMSPage = Number(firstCMSPage.querySelector('.pagination a.end').innerHTML) - 1
+      let fetching = []
 
-    let fetchPage = page => fetch('/api/get?url=http://www.dandad.org/manage/pages/basepage/?p=' + page).then(res => res.text()).then(
-      body => domParser.parseFromString(body, 'text/html')
-    );
+      dispatch(fetchPagesStart(lastCMSPage))
 
-    fetchPage(0).then(firstPage => {
-      let lastPage = Number(firstPage.querySelector('.pagination a.end').innerHTML - 1);
-      let fetching = [];
-
-      // Fetch every page of the pages list into an array of Promise results
-      for (let i = 0; i <= lastPage; i++) {
-        fetching.push(fetchPage(i));
+      for (let i = 0; i <= lastCMSPage; i++) {
+        fetching.push(
+          fetchAndParse(
+            `http://www.dandad.org/manage/pages/basepage/?p=${i}`,
+            () => dispatch(fetchPagesProgress())
+          )
+        )
       }
 
-      Promise.all(fetching).then(allPages => {
-        let pageDetails = [];
+      Promise.all(fetching).then(allCMSPages => {
+        let pages = []
 
-        // Select and process data from the HTML table on each page into an array of objects which represent the pages
-        allPages.forEach(page => {
-          let rows = page.querySelectorAll('#result_list tbody tr');
+        allCMSPages.forEach(cmsPage => {
+          let rows = cmsPage.querySelectorAll('#result_list tbody tr')
 
-          [].forEach.call(rows, row => pageDetails.push({
-            id:           Number(row.querySelector('th:nth-child(2) a').attributes.href.value.match(/\/([0-9]+)\/$/)[1]),
-            title:        row.querySelector('th:nth-child(2) a').text,
-            slug:         row.querySelector('td:nth-child(3)').innerHTML,
-            contentType:  row.querySelector('td:nth-child(4)').innerHTML,
-            isPublished:  row.querySelector('td:nth-child(5) input').checked,
+          ;[].forEach.call(rows, row => pages.push({
+            id: Number(row.querySelector('th:nth-child(2) a').attributes.href.value.match(/\/([0-9]+)\/$/)[1]),
+            title: row.querySelector('th:nth-child(2) a').text,
+            slug: row.querySelector('td:nth-child(3)').innerHTML,
+            contentType: row.querySelector('td:nth-child(4)').innerHTML,
+            isPublished: row.querySelector('td:nth-child(5) input').checked,
             isRestricted: row.querySelector('td:nth-child(7) img').alt === 'True'
-          }));
-        });
+          }))
+        })
 
-        // Persist and update the running app state separately -- reducer shouldn't know about persistence
-        window.localStorage.setItem(LOCAL_STORAGE_PAGES, JSON.stringify(pageDetails));
-        dispatch(fetchPagesEnd(pageDetails));
-      });
+        window.localStorage.setItem(LOCAL_STORAGE_PAGES, JSON.stringify(pages))
+        dispatch(fetchPagesEnd(pages))
+      })
     })
   }
 }
