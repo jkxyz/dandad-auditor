@@ -3,12 +3,22 @@ import { connect } from 'react-redux'
 import ViewSelector from './ViewSelector'
 import LoginButton from './LoginButton'
 import fetchWebToLeads from '../actions/fetchWebToLeads'
+import arrayToCsv from '../utils/arrayToCsv'
 
 let mapStateToProps = state => {
   return {
     webToLeads: state.webToLeads.list,
     isRefreshDisabled: state.webToLeads.isRefreshing || !state.session.isLoggedIn,
-    isRefreshing: state.webToLeads.isRefreshing
+    isRefreshing: state.webToLeads.isRefreshing,
+    handleDownload () {
+      let csv = arrayToCsv(state.webToLeads.list)
+      let anchor = document.createElement('a')
+
+      anchor.href = 'data:text/csv;charset=UTF-8,' + encodeURI(csv)
+      anchor.download = `Web to Leads ${Date.now()}`
+
+      anchor.click()
+    }
   }
 }
 
@@ -21,11 +31,14 @@ let mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  ({ webToLeads, isRefreshDisabled, isRefreshing, handleRefresh }) => {
+  ({ webToLeads, isRefreshDisabled, isRefreshing, handleRefresh, handleDownload }) => {
     return (
       <div className='uk-container uk-container-center'>
         <div className='uk-margin-top'>
           <ViewSelector current='Web to Leads' />
+          <a className='uk-button uk-margin-left' onClick={ handleDownload }>
+            Download CSV
+          </a>
           <button
             className='uk-button uk-button-primary uk-margin-left'
             onClick={ handleRefresh }

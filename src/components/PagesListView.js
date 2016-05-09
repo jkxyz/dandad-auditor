@@ -3,8 +3,9 @@ import {connect} from 'react-redux'
 import fetchPages from '../actions/fetchPages'
 import LoginButton from './LoginButton'
 import ViewSelector from './ViewSelector'
+import arrayToCsv from '../utils/arrayToCsv'
 
-let PagesListView = ({isLoggedIn, isRefreshingPages, handleRefreshPages, pages, handleSortPages, sortDirection, sortColumn}) => {
+let PagesListView = ({isLoggedIn, isRefreshingPages, handleRefreshPages, pages, handleSortPages, sortDirection, sortColumn, handleDownload}) => {
   let Column = ({column, children}) => {
     return (
       <th onClick={() => handleSortPages(column)}>
@@ -20,6 +21,9 @@ let PagesListView = ({isLoggedIn, isRefreshingPages, handleRefreshPages, pages, 
     <div className='uk-container uk-container-center'>
       <div className='uk-margin-top'>
         <ViewSelector current='Pages' />
+        <a className='uk-button uk-margin-left' onClick={ handleDownload }>
+          Download CSV
+        </a>
         <button
           className='uk-button uk-button-primary uk-margin-left'
           disabled={!isLoggedIn || isRefreshingPages}
@@ -63,7 +67,16 @@ let mapStateToProps = state => {
     isRefreshingPages: state.pages.isRefreshingPages,
     pages: state.pages.pagesList,
     sortColumn: state.pages.sortColumn,
-    sortDirection: state.pages.sortDirection
+    sortDirection: state.pages.sortDirection,
+    handleDownload () {
+      let csv = arrayToCsv(state.pages.pagesList)
+      let anchor = document.createElement('a')
+
+      anchor.href = 'data:text/csv;charset=UTF-8,' + encodeURI(csv)
+      anchor.download = `Pages ${Date.now()}`
+
+      anchor.click()
+    }
   };
 };
 
