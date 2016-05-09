@@ -8,7 +8,6 @@ export const FETCH_WEB_TO_LEADS_PROGRESS = 'FETCH_WEB_TO_LEADS_PROGRESS'
 export const LOCAL_STORAGE_WEB_TO_LEADS = 'dandadAuditorWebToLeads'
 
 export function fetchWebToLeadsStart (total = null) {
-  console.log(total)
   return { type: FETCH_WEB_TO_LEADS_START, total }
 }
 
