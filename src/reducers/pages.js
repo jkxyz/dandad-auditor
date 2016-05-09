@@ -4,9 +4,11 @@ import {
   FETCH_PAGES_PROGRESS
 } from '../actions/fetchPages'
 
+import { INIT_PAGES } from '../actions/init'
+
 const INITIAL_STATE = {
   list: [],
-  isRefreshing: false,
+  isRefreshing: true,
   progress: { done: 0, total: null }
 }
 
@@ -36,6 +38,13 @@ export default function pages (state = INITIAL_STATE, action) {
         ...state.progress,
         done: ++state.progress.done
       }
+    }
+
+  case INIT_PAGES:
+    return {
+      ...state,
+      isRefreshing: false,
+      list: action.pages
     }
 
   default:

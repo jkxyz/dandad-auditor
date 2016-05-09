@@ -4,9 +4,11 @@ import {
   FETCH_WEB_TO_LEADS_PROGRESS
 } from '../actions/fetchWebToLeads'
 
+import { INIT_WEB_TO_LEADS } from '../actions/init'
+
 const INITIAL_STATE = {
   list: [],
-  isRefreshing: false,
+  isRefreshing: true,
   progress: { done: 0, total: 0 }
 }
 
@@ -36,6 +38,13 @@ export default function webToLeads (state = INITIAL_STATE, action) {
         ...state.progress,
         done: ++state.progress.done
       }
+    }
+
+  case INIT_WEB_TO_LEADS:
+    return {
+      ...state,
+      isRefreshing: false,
+      list: action.webToLeads
     }
 
   default:

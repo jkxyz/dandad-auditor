@@ -1,24 +1,34 @@
-import { loginStart, loginEnd } from './login'
-import { fetchPagesStart, fetchPagesEnd, LOCAL_STORAGE_PAGES } from './fetchPages'
-import {
-  fetchWebToLeadsStart,
-  fetchWebToLeadsEnd,
-  LOCAL_STORAGE_WEB_TO_LEADS
-} from './fetchWebToLeads'
+import { LOCAL_STORAGE_PAGES } from './fetchPages'
+import { LOCAL_STORAGE_WEB_TO_LEADS } from './fetchWebToLeads'
+
+export const INIT_LOGIN = 'INIT_LOGIN'
+export const INIT_PAGES = 'INIT_PAGES'
+export const INIT_WEB_TO_LEADS = 'INIT_WEB_TO_LEADS'
+
+export function initLogin (username) {
+  return { type: INIT_LOGIN, username }
+}
+
+export function initPages (pages) {
+  return { type: INIT_PAGES, pages }
+}
+
+export function initWebToLeads (webToLeads) {
+  return { type: INIT_WEB_TO_LEADS, webToLeads }
+}
 
 export default function init () {
   return dispatch => {
-    dispatch(loginStart())
-    dispatch(fetchPagesStart())
-    dispatch(fetchWebToLeadsStart())
-
-    fetch('/api/username').then(
-      response => response.status === 200 ? response.text() : null
-    ).then(
-      username => dispatch(loginEnd(username))
+    fetch('/api/username').then(r => r.ok ? r.text() : null).then(
+      username => dispatch(initLogin(username))
     )
 
-    dispatch(fetchWebToLeadsEnd(JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_WEB_TO_LEADS) || '[]')))
-    dispatch(fetchPagesEnd(JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_PAGES) || '[]')))
+    dispatch(initPages(
+      JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_PAGES) || '[]')
+    ))
+
+    dispatch(initWebToLeads(
+      JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_WEB_TO_LEADS) || '[]')
+    ))
   }
 }
