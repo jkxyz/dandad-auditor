@@ -25,7 +25,10 @@ function pageHasWebToLead (page) {
 
 export default function fetchWebToLeads () {
   return (dispatch, getState) => {
-    let pageUrls = getState().pages.pagesList.map(page => slugToUrl(page.slug))
+    let pageUrls =
+      getState().pages.list
+        .filter(p => p.isPublished && !p.isRestricted)
+        .map(page => slugToUrl(page.slug))
 
     dispatch(fetchWebToLeadsStart(pageUrls.length))
 
