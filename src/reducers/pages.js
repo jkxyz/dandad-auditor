@@ -3,7 +3,6 @@ import {
   FETCH_PAGES_END,
   FETCH_PAGES_PROGRESS
 } from '../actions/fetchPages'
-
 import { INIT_PAGES } from '../actions/init'
 
 const INITIAL_STATE = {
@@ -12,16 +11,13 @@ const INITIAL_STATE = {
   progress: { done: 0, total: null }
 }
 
-export default function pages (state = INITIAL_STATE, action) {
+export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
   case FETCH_PAGES_START:
     return {
       ...state,
       isRefreshing: true,
-      progress: {
-        done: 0,
-        total: action.total
-      }
+      progress: { done: 0, total: action.total }
     }
 
   case FETCH_PAGES_END:
@@ -36,7 +32,7 @@ export default function pages (state = INITIAL_STATE, action) {
       ...state,
       progress: {
         ...state.progress,
-        done: ++state.progress.done
+        done: state.progress.done + 1
       }
     }
 

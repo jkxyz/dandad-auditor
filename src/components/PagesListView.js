@@ -5,6 +5,7 @@ import DownloadCSVButton from './DownloadCSVButton'
 import RefreshButton from './RefreshButton'
 import fetchPages from '../actions/fetchPages'
 import RefreshProgressBar from './RefreshProgressBar'
+import ListTable from './ListTable'
 
 let mapStateToProps = state => {
   return {
@@ -23,7 +24,7 @@ let mapDispatchToProps = dispatch => {
 export default connect(mapStateToProps, mapDispatchToProps)(
   ({ pages, handleRefresh }) => {
     return (
-      <div className='uk-container uk-container-center'>
+      <div className='uk-margin-left uk-margin-right'>
         <Header currentView='Pages'>
           <DownloadCSVButton
             className='uk-margin-left'
@@ -37,30 +38,17 @@ export default connect(mapStateToProps, mapDispatchToProps)(
           />
         </Header>
         <RefreshProgressBar prefix='pages' />
-        <table className='uk-table'>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Title</th>
-              <th>Slug</th>
-              <th>Type</th>
-              <th>Published?</th>
-              <th>Restricted?</th>
-            </tr>
-          </thead>
-          <tbody>
-            { pages.map(page => (
-              <tr key={ page.id }>
-                <td>{ page.id }</td>
-                <td>{ page.title }</td>
-                <td>{ page.slug }</td>
-                <td>{ page.contentType }</td>
-                <td>{ page.isPublished ? 'Yes' : 'No' }</td>
-                <td>{ page.isRestricted ? 'Yes' : 'No' }</td>
-              </tr>
-            )) }
-          </tbody>
-        </table>
+        <ListTable
+          prefix='pages'
+          columns={ {
+            id: 'ID',
+            title: 'Title',
+            slug: 'Slug',
+            contentType: 'Type',
+            isPublished: 'Published?',
+            isRestricted: 'Restricted?'
+          } }
+        />
       </div>
     )
   }

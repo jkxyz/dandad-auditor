@@ -1,3 +1,1 @@
-export default function slugToUrl (slug) {
-  return `http://www.dandad.org/en/${slug}/`
-}
+export default slug => `http://www.dandad.org/en/${slug}/`

@@ -7,7 +7,7 @@ const INITIAL_STATE = {
   username: null
 }
 
-export default function session (state = INITIAL_STATE, action) {
+export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
   case LOGIN_START:
     return { ...state, isLoggingIn: true }

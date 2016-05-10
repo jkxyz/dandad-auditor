@@ -1,24 +1,9 @@
-export default function arrayToCsv (items) {
-  if (!items) {
-    return ''
-  }
+import displayValue from './displayValue'
+import mapValues from './mapValues'
 
-  let rows = [Object.keys(items[0])]
+let sanitizedValue = value => `"${displayValue(value).replace(/"/, '\\"')}"`
 
-  items.forEach(item => {
-    let row = []
-
-    for (let key in item) {
-      if (typeof item[key] === 'boolean') {
-        row.push(item[key] ? 'Yes' : 'No')
-        continue
-      }
-
-      row.push(`"${item[key].toString().replace(/"/, '\\"')}"`)
-    }
-
-    rows.push(row.join(','))
-  })
-
-  return rows.join('\n')
-}
+export default items => [
+  Object.keys(items[0]),
+  ...items.map(item => mapValues(item, val => sanitizedValue(val)))
+].join('\n')

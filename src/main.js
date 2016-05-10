@@ -5,7 +5,7 @@ import Routes from './components/Routes'
 import store from './store'
 
 ReactDOM.render(
-  <Provider store={store}>
+  <Provider store={ store }>
     <Routes />
   </Provider>,
   document.getElementById('main')

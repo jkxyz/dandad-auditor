@@ -5,6 +5,7 @@ import Header from './Header'
 import DownloadCSVButton from './DownloadCSVButton'
 import RefreshButton from './RefreshButton'
 import RefreshProgressBar from './RefreshProgressBar'
+import ListTable from './ListTable'
 
 let mapStateToProps = state => {
   return {
@@ -23,7 +24,7 @@ let mapDispatchToProps = dispatch => {
 export default connect(mapStateToProps, mapDispatchToProps)(
   ({ webToLeads, handleRefresh }) => {
     return (
-      <div className='uk-container uk-container-center'>
+      <div className='uk-margin-left uk-margin-right'>
         <Header currentView='Web to Leads'>
           <DownloadCSVButton
             className='uk-margin-left'
@@ -37,30 +38,17 @@ export default connect(mapStateToProps, mapDispatchToProps)(
           />
         </Header>
         <RefreshProgressBar prefix='webToLeads' />
-        <table className='uk-table'>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Page Slug</th>
-              <th>Title</th>
-              <th>Tracking Code</th>
-              <th>SalesForce List ID</th>
-              <th>Subject</th>
-            </tr>
-          </thead>
-          <tbody>
-            { webToLeads.map(webToLead => (
-              <tr key={ webToLead.id }>
-                <td>{ webToLead.id }</td>
-                <td>{ webToLead.pageSlug }</td>
-                <td>{ webToLead.title }</td>
-                <td>{ webToLead.trackingCode }</td>
-                <td>{ webToLead.salesforceListId }</td>
-                <td>{ webToLead.subject }</td>
-              </tr>
-            )) }
-          </tbody>
-        </table>
+        <ListTable
+          prefix='webToLeads'
+          columns={ {
+            id: 'ID',
+            pageSlug: 'Page Slug',
+            title: 'Title',
+            trackingCode: 'Tracking Code',
+            salesforceListId: 'SalesForce List ID',
+            subject: 'Subject'
+          } }
+        />
       </div>
     )
   }

@@ -18,18 +18,9 @@ let mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  ({ className, prefix, getProgress, getIsRefreshing }) => {
-    if (!getIsRefreshing(prefix)) {
-      return null
-    }
-
-    return (
+  ({ className, prefix, getProgress, getIsRefreshing }) =>
+    !getIsRefreshing(prefix) ? null :
       <div className={ className + ' uk-progress' }>
-        <div
-          className='uk-progress-bar'
-          style={ { width: getProgress(prefix) } }>
-        </div>
+        <div className='uk-progress-bar' style={ { width: getProgress(prefix) } }></div>
       </div>
-    )
-  }
 )
