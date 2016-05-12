@@ -10,6 +10,7 @@ export default ({current}) =>
     <div className='uk-dropdown uk-dropdown-bottom'>
       <ul className='uk-nav uk-nav-dropdown'>
         <li><Link to='/'>Pages</Link></li>
+        <li><Link to='/redirects'>Redirects</Link></li>
         <li><Link to='/components/web-to-leads'>Web to Leads</Link></li>
       </ul>
     </div>
