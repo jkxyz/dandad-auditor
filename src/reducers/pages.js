@@ -4,6 +4,7 @@ import {
   FETCH_PAGES_PROGRESS
 } from '../actions/fetchPages'
 import { INIT_PAGES } from '../actions/init'
+import { UNPUBLISH_PAGE } from '../actions/unpublishPage'
 
 const INITIAL_STATE = {
   list: [],
@@ -34,6 +35,12 @@ export default (state = INITIAL_STATE, action) => {
         ...state.progress,
         done: state.progress.done + 1
       }
+    }
+
+  case UNPUBLISH_PAGE:
+    return {
+      ...state,
+      list: state.list.map(p => p.id === action.page.id ? { ...p, isPublished: false } : p)
     }
 
   case INIT_PAGES:

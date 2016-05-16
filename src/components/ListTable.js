@@ -16,19 +16,32 @@ let mapDispatchToProps = dispatch => {
   return {}
 }
 
-let TableHeader = ({ columns }) => (
-  <thead><tr>{ mapValues(columns, (c, k) => <th key={ k }>{ c }</th>) }</tr></thead>
+let TableHeader = ({ columns, extraColumns }) => (
+  <thead>
+    <tr>
+      { mapValues(columns, (c, k) => <th key={ k }>{ c }</th>) }
+      { extraColumns.map((f) => <th key={ f }></th>) }
+    </tr>
+  </thead>
 )
 
-let TableRow = ({ columns, row }) => (
+let TableRow = ({ columns, row, extraColumns }) => (
   <tr>
     { Object.keys(columns).map(k => <td key={ k }>{ displayValue(row[k]) }</td>) }
+    { extraColumns.map(c => c(row)) }
   </tr>
 )
 
-let TableBody = ({ columns, list }) => (
+let TableBody = ({ columns, list, extraColumns }) => (
   <tbody>
-    { list.map(row => <TableRow key={ row.id } columns={ columns } row={ row } />) }
+    { list.map(row => (
+      <TableRow
+        key={ row.id }
+        columns={ columns }
+        row={ row }
+        extraColumns={ extraColumns }
+      />
+    )) }
   </tbody>
 )
 
@@ -47,8 +60,15 @@ export default connect(mapStateToProps, mapDispatchToProps)(
       return (
         <div className='uk-overflow-container uk-margin-top'>
           <table className='uk-table'>
-            <TableHeader columns={ this.props.columns } />
-            <TableBody columns={ this.props.columns } list={ this.state.list } />
+            <TableHeader
+              columns={ this.props.columns }
+              extraColumns= { this.props.extraColumns || [] }
+            />
+            <TableBody
+              columns={ this.props.columns }
+              list={ this.state.list }
+              extraColumns={ this.props.extraColumns || [] }
+            />
           </table>
         </div>
       )

@@ -78,8 +78,8 @@ class ProxyServlet < WEBrick::HTTPServlet::AbstractServlet
   end
 
   def do_POST(req, res)
-    session_id = req.request_uri.query.match(%r{session_id=([^&]+)(&url=(.+)|$)})[1]
-    url = req.request_uri.query.match(%r{url=([^&]+)(&session_id=(.+)|$)})[1]
+    session_id = req.request_uri.query.match(%r{session_id=([^&]+)})[1]
+    url = req.request_uri.query.match(%r{url=([^&]+)})[1]
 
     csrf_token_request = Net::HTTP::Get.new(URI('http://www.dandad.org/manage/pages/basepage/add/'))
     csrf_token_request['Cookie'] = "websitesessionid=#{session_id}"

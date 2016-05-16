@@ -4,6 +4,7 @@ import {
   FETCH_REDIRECTS_PROGRESS
 } from '../actions/fetchRedirects'
 import { INIT_REDIRECTS } from '../actions/init'
+import { UPDATE_REDIRECT } from '../actions/updateRedirect'
 
 const INITIAL_STATE = {
   list: [],
@@ -31,6 +32,12 @@ export default (state = INITIAL_STATE, action) => {
     return {
       ...state,
       progress: { ...state.progress, done: state.progress.done + 1 }
+    }
+
+  case UPDATE_REDIRECT:
+    return {
+      ...state,
+      list: action.redirects
     }
 
   case INIT_REDIRECTS:

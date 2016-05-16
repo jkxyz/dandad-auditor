@@ -6,6 +6,7 @@ import RefreshButton from './RefreshButton'
 import fetchPages from '../actions/fetchPages'
 import RefreshProgressBar from './RefreshProgressBar'
 import ListTable from './ListTable'
+import unpublishPage from '../actions/unpublishPage'
 
 let mapStateToProps = state => {
   return {
@@ -17,39 +18,51 @@ let mapDispatchToProps = dispatch => {
   return {
     handleRefresh () {
       dispatch(fetchPages())
+    },
+    handleUnpublish (page) {
+      dispatch(unpublishPage(page, '/'))
     }
   }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  ({ pages, handleRefresh }) => {
-    return (
-      <div className='uk-margin-left uk-margin-right'>
-        <Header currentView='Pages'>
-          <DownloadCSVButton
-            className='uk-margin-left'
-            data={ pages }
-            filePrefix='Pages'
-          />
-          <RefreshButton
-            className='uk-margin-left'
-            onClick={ handleRefresh }
-            prefix='pages'
-          />
-        </Header>
-        <RefreshProgressBar prefix='pages' />
-        <ListTable
-          prefix='pages'
-          columns={ {
-            id: 'ID',
-            title: 'Title',
-            slug: 'Slug',
-            contentType: 'Type',
-            isPublished: 'Published?',
-            isRestricted: 'Restricted?'
-          } }
+  ({ pages, handleRefresh, handleUnpublish }) => (
+    <div className='uk-margin-left uk-margin-right'>
+      <Header currentView='Pages'>
+        <DownloadCSVButton
+          className='uk-margin-left'
+          data={ pages }
+          filePrefix='Pages'
         />
-      </div>
-    )
-  }
+        <RefreshButton
+          className='uk-margin-left'
+          onClick={ handleRefresh }
+          prefix='pages'
+        />
+      </Header>
+      <RefreshProgressBar prefix='pages' />
+      <ListTable
+        prefix='pages'
+        columns={ {
+          id: 'ID',
+          title: 'Title',
+          slug: 'Slug',
+          contentType: 'Type',
+          isPublished: 'Published?',
+          isRestricted: 'Restricted?'
+        } }
+        extraColumns={ [
+          (page) => (
+            <td
+              key={ `unpub-page-${page.id}` }
+              title='Unpublish'
+              style={ { cursor: 'pointer' } }
+              onClick={ () => handleUnpublish(page) }>
+              <i className='uk-icon-remove' />
+            </td>
+          )
+        ] }
+      />
+    </div>
+  )
 )
