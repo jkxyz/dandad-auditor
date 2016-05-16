@@ -1,10 +1,21 @@
 import slugToUrl from '../utils/slugToUrl'
 import updateRedirect from './updateRedirect'
 
-export const UNPUBLISH_PAGE = 'UNPUBLISH_PAGE'
+export const UNPUBLISH_PAGE_START = 'UNPUBLISH_PAGE_START'
+export const UNPUBLISH_PAGE_END = 'UNPUBLISH_PAGE_END'
+
+export let unpublishPageStart = () => {
+  return { type: UNPUBLISH_PAGE_START }
+}
+
+export let unpublishPageEnd = (page) => {
+  return { type: UNPUBLISH_PAGE_END, page }
+}
 
 export default (page, redirectTo = null) => (dispatch, getState) => {
   let sessionId = getState().session.sessionId
+
+  dispatch(unpublishPageStart())
 
   if (redirectTo !== null) {
     let redirectsToPage = getState().redirects.list
@@ -37,7 +48,6 @@ export default (page, redirectTo = null) => (dispatch, getState) => {
     })
   }
 
-  fetch(`/api/proxy?session_id=${sessionId}&url=http://www.dandad.org/manage/pages/basepage/unpublish/${page.id}/`).then(
-    res => dispatch({ type: UNPUBLISH_PAGE, page })
-  )
+  fetch(`/api/proxy?session_id=${sessionId}&url=http://www.dandad.org/manage/pages/basepage/unpublish/${page.id}/`)
+    .then(() => dispatch(unpublishPageEnd(page)))
 }

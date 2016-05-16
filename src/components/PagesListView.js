@@ -6,7 +6,7 @@ import RefreshButton from './RefreshButton'
 import fetchPages from '../actions/fetchPages'
 import RefreshProgressBar from './RefreshProgressBar'
 import ListTable from './ListTable'
-import unpublishPage from '../actions/unpublishPage'
+import UnpublishPageColumn from './UnpublishPageColumn'
 
 let mapStateToProps = state => {
   return {
@@ -18,9 +18,6 @@ let mapDispatchToProps = dispatch => {
   return {
     handleRefresh () {
       dispatch(fetchPages())
-    },
-    handleUnpublish (page) {
-      dispatch(unpublishPage(page, '/'))
     }
   }
 }
@@ -51,17 +48,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(
           isPublished: 'Published?',
           isRestricted: 'Restricted?'
         } }
-        extraColumns={ [
-          (page) => (
-            <td
-              key={ `unpub-page-${page.id}` }
-              title='Unpublish'
-              style={ { cursor: 'pointer' } }
-              onClick={ () => handleUnpublish(page) }>
-              <i className='uk-icon-remove' />
-            </td>
-          )
-        ] }
+        extraColumns={ [ (page) => (
+          <UnpublishPageColumn
+            key={ `unpublish-page-${page}` }
+            page={ page }
+          />
+        ) ] }
       />
     </div>
   )
