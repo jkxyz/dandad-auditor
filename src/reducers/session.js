@@ -3,8 +3,9 @@ import { INIT_LOGIN } from '../actions/init'
 
 const INITIAL_STATE = {
   isLoggedIn: false,
-  isLoggingIn: true,
-  username: null
+  isLoggingIn: false,
+  username: null,
+  sessionId: null
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -16,16 +17,9 @@ export default (state = INITIAL_STATE, action) => {
     return {
       ...state,
       isLoggingIn: false,
-      isLoggedIn: !!action.username,
-      username: action.username
-    }
-
-  case INIT_LOGIN:
-    return {
-      ...state,
-      isLoggingIn: false,
-      isLoggedIn: !!action.username,
-      username: action.username
+      isLoggedIn: action.success,
+      username: action.username,
+      sessionId: action.sessionId
     }
 
   default:

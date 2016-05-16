@@ -45,7 +45,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(
     },
     render () {
       return (
-        <div className='uk-overflow-container'>
+        <div className='uk-overflow-container uk-margin-top'>
           <table className='uk-table'>
             <TableHeader columns={ this.props.columns } />
             <TableBody columns={ this.props.columns } list={ this.state.list } />

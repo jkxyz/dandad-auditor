@@ -1,86 +1,121 @@
 #!/usr/bin/env ruby
 
-# Serves the static client files for the D&AD Auditor tool and manages authentication to the CMS to circumvent
-# browser cross-origin security features. Several HTTP endpoints are provided to login, determine the logged in user,
-# and proxy authenticated requests to www.dandad.org.
-#
-# Usage:
-#
-#   ruby server.rb
-#
-# HTTP API Methods:
-#
-#   GET  /api/username
-#     If an authenticated session cookie and username exists, return the username as a text/plain response.
-#
-#   POST /api/login
-#     Parameters: username, password
-#     Store in memory an authenticated CMS session cookie for the provided `username` and `password`. Return 200 OK
-#     for a successful login attempt and 403 Forbidden for a failed login attempt.
-#
-#   GET  /api/get
-#     Parameters: url
-#     Return a 200 OK response with the body received from a request to `url`, using the contents of the stored
-#     session cookie to authenticate as a logged-in user of the CMS.
-
-require 'webrick'
 require 'net/http'
+require 'webrick'
+require 'json'
 
-SESSION = Struct.new(:cookie, :username).new
-SERVER  = WEBrick::HTTPServer.new(Port: 3000)
+server = WEBrick::HTTPServer.new(Port: 3000)
 
-SERVER.mount_proc('/api/username') do |req, res|
-  res.status = SESSION.username ? 200 : 404
-  res.body = SESSION.username || ''
-  res['Content-Type'] = 'text/plain'
-end
-
-SERVER.mount_proc('/api/login') do |req, res|
-  username = req.query['username'].strip
-  password = req.query['password'].strip
-
-  Net::HTTP.start('www.dandad.org', 80) do |http|
-    login_form_res = http.request(Net::HTTP::Get.new(URI('http://www.dandad.org/manage/')))
-    login_submit_req = Net::HTTP::Post.new(URI('http://www.dandad.org/manage/'))
-
-    login_submit_req.set_form_data(
-      'csrfmiddlewaretoken'    => login_form_res.body.match(/name='csrfmiddlewaretoken' value='(.+)'/)[1],
-      'username'               => username,
-      'password'               => password,
-      'this_is_the_login_form' => 1,
-      'next'                   => '/manage/'
-    )
-
-    login_submit_req['Cookie'] = login_form_res['Set-Cookie']
-    login_submit_res = http.request(login_submit_req)
-
-    unless login_submit_res.is_a?(Net::HTTPFound)
-      res.status = 403
+# POST /api/sessions
+class SessionsServlet < WEBrick::HTTPServlet::AbstractServlet
+  def do_POST(req, res)
+    unless req.path == '/api/sessions'
+      res.status = 404
       return
     end
 
-    SESSION.cookie = login_submit_res['Set-Cookie']
-    SESSION.username = username
-    res.status = 200
+    login_form_request = Net::HTTP.get_response(URI('http://www.dandad.org/manage/'))
+
+    csrf_token = login_form_request.body
+      .match(%r{name='csrfmiddlewaretoken' value='(.+)'})[1]
+
+    login_request = Net::HTTP::Post.new(URI('http://www.dandad.org/manage/'))
+    login_request['Cookie'] = login_form_request['Set-Cookie']
+    login_request.set_form_data(
+      'csrfmiddlewaretoken' => csrf_token,
+      'username' => req.query['username'].strip,
+      'password' => req.query['password'].strip,
+      'this_is_the_login_form' => 1,
+      'next' => '/manage/'
+    )
+
+    login_response = nil
+
+    Net::HTTP.start('www.dandad.org', 80) do |http|
+      login_response = http.request(login_request)
+    end
+
+    unless login_response.is_a?(Net::HTTPFound)
+      res.status = 200
+      res['Content-Type'] = 'application/json'
+      res.body = JSON.dump(success: false)
+      return
+    end
+
+    session_id = login_response.get_fields('Set-Cookie')
+      .select { |c| c.match(%r{^websitesessionid}) }.first
+      .match(%r{^websitesessionid=(.+); Domain})[1]
+
+    res.status = 201
+    res['Content-Type'] = 'application/json'
+    res.body = JSON.dump(
+      success: true,
+      username: req.query['username'].strip,
+      sessionId: session_id
+    )
   end
 end
 
-SERVER.mount_proc('/api/get') do |req, res|
-  Net::HTTP.start('www.dandad.org', 80) do |http|
-    request = Net::HTTP::Get.new(URI(req.query['url']))
-    request['Cookie'] = SESSION.cookie
+# GET /api/proxy?url=URL&sessionId=SESSION_ID
+# POST /api/proxy?url=URL&sessionId=SESSION_ID
+class ProxyServlet < WEBrick::HTTPServlet::AbstractServlet
+  def do_GET(req, res)
+    page_request = Net::HTTP::Get.new(URI(req.query['url']))
+    page_request['Cookie'] = "websitesessionid=#{req.query['session_id']}"
 
-    res.status = 200
-    res.body = http.request(request).body
-    res['Content-Type'] = 'text/html'
+    Net::HTTP.start('www.dandad.org', 80) do |http|
+      page_response = http.request(page_request)
+
+      res.status = 200
+      res['Content-Type'] = 'application/json;charset=utf-8'
+      res.body = JSON.dump(
+        status: page_response.code,
+        body: page_response.body.encode(Encoding::UTF_8, undef: :replace, invalid: :replace),
+        headers: page_response.to_hash,
+        url: req.query['url']
+      )
+    end
+  end
+
+  def do_POST(req, res)
+    session_id = req.request_uri.query.match(%r{session_id=([^&]+)(&url=(.+)|$)})[1]
+    url = req.request_uri.query.match(%r{url=([^&]+)(&session_id=(.+)|$)})[1]
+
+    csrf_token_request = Net::HTTP::Get.new(URI('http://www.dandad.org/manage/pages/basepage/add/'))
+    csrf_token_request['Cookie'] = "websitesessionid=#{session_id}"
+
+    post_request = Net::HTTP::Post.new(URI(req.request_uri.query.match(%r{url=(.+)$})[1]))
+
+    Net::HTTP.start('www.dandad.org', 80) do |http|
+      csrf_token = http.request(csrf_token_request).get_fields('Set-Cookie')
+        .select { |c| c.match(%r{csrftoken}) }.first
+        .match(%r{csrftoken=(.+); expires})[1]
+
+      params = req.query.to_h
+      params['csrfmiddlewaretoken'] = csrf_token
+      post_request.set_form_data(params)
+      post_request['Cookie'] = "websitesessionid=#{session_id};csrftoken=#{csrf_token}"
+
+      post_response = http.request(post_request)
+
+      res.status = 200
+      res['Content-Type'] = 'application/json'
+      res.body = JSON.dump(
+        status: post_response.code,
+        body: String.new(post_response.body, encoding: Encoding::UTF_8),
+        headers: post_response.to_hash,
+        url: url
+      )
+    end
   end
 end
 
-SERVER.mount('/', WEBrick::HTTPServlet::FileHandler, File.dirname(__FILE__),
+trap 'INT' do server.shutdown end
+
+server.mount '/api/sessions', SessionsServlet
+server.mount '/api/proxy', ProxyServlet
+server.mount '/', WEBrick::HTTPServlet::FileHandler, File.dirname(__FILE__),
   FileCallback: -> (req, res) { res['Pragma'] = 'no-cache' }
-)
-
-trap 'INT' do SERVER.shutdown end
 
 puts <<BANNER
 
@@ -93,16 +128,12 @@ puts <<BANNER
  888    888 .d88P88K.d88P    d88P  888 888    888
  888    888 888"  Y888P"    d88P   888 888    888
  888  .d88P Y88b .d8888b   d8888888888 888  .d88P
- 8888888P"   "Y8888P" Y88bd88P     888 8888888P"
+ 8888888P"   "Y8888P" Y88bd88P     888 8888888P
 
-Design and Art Direction — Website Audit Tool
-
-Server starting on http://localhost:3000
+ Starting server on http://localhost:3000
 
 -------------------------------------------------
 
 BANNER
 
-system('sleep 2; open http://localhost:3000') if RUBY_PLATFORM.include?('darwin')
-
-SERVER.start
+server.start

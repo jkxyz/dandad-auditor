@@ -1,15 +1,15 @@
-export default (domParser, url, finishedCallback = () => null) =>
-  fetch(`/api/get?url=${url}`)
-    .then(r => r.ok ? r.text() : null)
-    .then(body => {
-      if (body === null || !body.toString().trim()) {
+export default (domParser, sessionId, url, finishedCallback = () => null) => {
+  return fetch(`/api/proxy?session_id=${sessionId}&url=${url}`)
+    .then(r => r.ok ? r.json() : null)
+    .then(response => {
+      if (response === null) {
         return null
       }
 
-      let doc = domParser.parseFromString(body, 'text/html')
-      doc.url = url
+      finishedCallback(response)
 
-      finishedCallback(doc)
+      response.doc = domParser.parseFromString(response.body, 'text/html')
 
-      return doc
+      return response
     })
+}

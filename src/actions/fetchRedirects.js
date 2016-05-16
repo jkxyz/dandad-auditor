@@ -18,12 +18,12 @@ export let fetchRedirectsProgress = () => {
   return { type: FETCH_REDIRECTS_PROGRESS }
 }
 
-export default () => dispatch => {
-  let fetchAndParse = _fetchAndParse.bind(undefined, new DOMParser())
+export default () => (dispatch, getState) => {
+  let fetchAndParse = _fetchAndParse.bind(undefined, new DOMParser(), getState().session.sessionId)
 
   dispatch(fetchRedirectsStart())
 
-  fetchAndParse('http://www.dandad.org/manage/deflect/redirect/').then(firstCMSPage => {
+  fetchAndParse('http://www.dandad.org/manage/deflect/redirect/').then(({ doc: firstCMSPage }) => {
     let lastCMSPage = Number(firstCMSPage.querySelector('.pagination a.end').innerHTML) - 1
     let fetching = []
 
@@ -41,7 +41,7 @@ export default () => dispatch => {
     Promise.all(fetching).then(allCMSPages => {
       let redirects = []
 
-      allCMSPages.forEach(cmsPage => {
+      allCMSPages.forEach(({ doc: cmsPage }) => {
         let rows = cmsPage.querySelectorAll('#result_list tbody tr')
 
         ;[].forEach.call(rows, row => redirects.push({

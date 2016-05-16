@@ -18,12 +18,12 @@ export let fetchPagesProgress = () => {
   return { type: FETCH_PAGES_PROGRESS }
 }
 
-export default () => (dispatch, state) => {
-  let fetchAndParse = _fetchAndParse.bind(undefined, new DOMParser())
+export default () => (dispatch, getState) => {
+  let fetchAndParse = _fetchAndParse.bind(undefined, new DOMParser(), getState().session.sessionId)
 
   dispatch(fetchPagesStart())
 
-  fetchAndParse('http://www.dandad.org/manage/pages/basepage/').then(firstCMSPage => {
+  fetchAndParse('http://www.dandad.org/manage/pages/basepage/').then(({ doc: firstCMSPage }) => {
     let lastCMSPage = Number(firstCMSPage.querySelector('.pagination a.end').innerHTML) - 1
     let fetching = []
 
@@ -41,7 +41,7 @@ export default () => (dispatch, state) => {
     Promise.all(fetching).then(allCMSPages => {
       let pages = []
 
-      allCMSPages.forEach(cmsPage => {
+      allCMSPages.forEach(({ doc: cmsPage }) => {
         let rows = cmsPage.querySelectorAll('#result_list tbody tr')
 
         ;[].forEach.call(rows, row => pages.push({

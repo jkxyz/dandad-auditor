@@ -19,7 +19,7 @@ export let fetchWebToLeadsProgress = () => {
   return { type: FETCH_WEB_TO_LEADS_PROGRESS }
 }
 
-let pageHasWebToLead = page => page && page.querySelector('.web-to-lead') !== null
+let pageHasWebToLead = page => page && page.doc.querySelector('.web-to-lead') !== null
 
 export default () => (dispatch, getState) => {
   let pageUrls =
@@ -29,13 +29,12 @@ export default () => (dispatch, getState) => {
 
   dispatch(fetchWebToLeadsStart(pageUrls.length))
 
-  let domParser = new DOMParser()
-  let fetchAndParse = _fetchAndParse.bind(undefined, domParser)
+  let fetchAndParse = _fetchAndParse.bind(undefined, new DOMParser(), getState().session.sessionId)
 
   Promise.all(
     pageUrls.map(p => fetchAndParse(p, () => dispatch(fetchWebToLeadsProgress())))
   ).then(pages => {
-    let webToLeads = pages.filter(pageHasWebToLead).map(page => {
+    let webToLeads = pages.filter(pageHasWebToLead).map(({ doc: page, url }) => {
       let webToLead = page.querySelector('.web-to-lead')
       let form = webToLead.querySelector('form')
 
@@ -45,7 +44,7 @@ export default () => (dispatch, getState) => {
         trackingCode: form.dataset.trackingcode,
         salesforceListId: form.children['id_salesforce_list_id'].value,
         subject: form.children['id_subject'].value,
-        pageSlug: new URL(page.url).pathname.match(/^\/en\/(.*)\//)[1]
+        pageSlug: new URL(url).pathname.match(/^\/en\/(.*)\//)[1]
       }
     })
 
