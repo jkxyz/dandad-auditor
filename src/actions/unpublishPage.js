@@ -27,7 +27,6 @@ export default (page, redirectTo = null) => (dispatch, getState) => {
       formData.append('site', 1)
       formData.append('old_path', redirect.from)
       formData.append('new_path', redirectTo)
-      formData.append('is_regex', 0)
 
       fetch(
         `/api/proxy?session_id=${sessionId}&url=`
@@ -41,7 +40,6 @@ export default (page, redirectTo = null) => (dispatch, getState) => {
     formData.append('site', 1)
     formData.append('old_path', `/en/${page.slug}/`)
     formData.append('new_path', redirectTo)
-    formData.append('is_regex', 0)
 
     fetch(`/api/proxy?session_id=${sessionId}&url=http://www.dandad.org/manage/deflect/redirect/add/`, {
       method: 'POST', body: formData
